@@ -2,6 +2,7 @@ package org.ibs.cds.gode.entity.manager;
 
 import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
+import org.ibs.cds.gode.counter.CounterSpectator;
 import org.ibs.cds.gode.entity.cache.repo.CacheableEntityRepo;
 import org.ibs.cds.gode.entity.manager.operation.StateEntityManagerOperation;
 import org.ibs.cds.gode.entity.repo.Repo;
@@ -67,7 +68,12 @@ public abstract class EntityManager<View extends EntityView<Id>, Entity extends 
     private void setDefaultFields(Entity entity, Date time) {
         if (entity.getCreatedOn() == null) entity.setCreatedOn(time);
         entity.setUpdatedOn(time);
-        if (entity.getAppId() == null || entity.getAppId().compareTo(0L) == 0) entity.setAppId(AppId.next());
+        entity.autoIncrementFields().stream()
+                .filter(field-> {
+                    Long currentValue = field.getFieldGetter().get();
+                    return currentValue == null || currentValue.compareTo(0L) == 0;
+                })
+                .forEach(field->field.getFieldSetter().accept(CounterSpectator.getNext(entity.getClassifier())));
     }
 
     public Optional<Entity> beforeSave(Optional<Entity> entity) {

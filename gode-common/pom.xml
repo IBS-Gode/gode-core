@@ -79,5 +79,10 @@
             <artifactId>dateparser</artifactId>
             <version>1.0.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.googlecode.cqengine</groupId>
+            <artifactId>cqengine</artifactId>
+            <version>${cqengine.version}</version>
+        </dependency>
     </dependencies>
 </project>

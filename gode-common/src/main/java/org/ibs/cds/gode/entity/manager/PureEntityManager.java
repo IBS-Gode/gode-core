@@ -2,6 +2,7 @@ package org.ibs.cds.gode.entity.manager;
 
 import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
+import org.ibs.cds.gode.counter.CounterSpectator;
 import org.ibs.cds.gode.entity.cache.repo.CacheableEntityRepo;
 import org.ibs.cds.gode.entity.manager.operation.PureStateEntityManagerOperation;
 import org.ibs.cds.gode.entity.repo.Repo;
@@ -14,7 +15,6 @@ import org.ibs.cds.gode.exception.KnownException;
 import org.ibs.cds.gode.pagination.PageContext;
 import org.ibs.cds.gode.pagination.PagedData;
 import org.ibs.cds.gode.status.BinaryStatus;
-import org.ibs.cds.gode.system.AppId;
 import org.ibs.cds.gode.util.PageUtils;
 
 import java.io.Serializable;
@@ -59,7 +59,7 @@ public abstract class PureEntityManager<Entity extends EntityView<Id>,
         return entity.getCreatedOn() != null && entity.getUpdatedOn() != null && entity.getCreatedOn().equals(entity.getCreatedOn());
     }
 
-    private void setDefaultFields(Entity entity) {
+    protected void setDefaultFields(Entity entity) {
         Date now = new Date();
         setDefaultFields(entity, now);
     }
@@ -67,7 +67,12 @@ public abstract class PureEntityManager<Entity extends EntityView<Id>,
     private void setDefaultFields(Entity entity, Date time) {
         if (entity.getCreatedOn() == null) entity.setCreatedOn(time);
         entity.setUpdatedOn(time);
-        if (entity.getAppId() == null || entity.getAppId().compareTo(0L) == 0) entity.setAppId(AppId.next());
+        entity.autoIncrementFields().stream()
+                .filter(field-> {
+                    Long currentValue = field.getFieldGetter().get();
+                    return currentValue == null || currentValue.compareTo(0L) == 0;
+                })
+                .forEach(field->field.getFieldSetter().accept(CounterSpectator.getNext(entity.getClassifier())));
     }
 
     public Optional<Entity> beforeSave(Optional<Entity> entity) {

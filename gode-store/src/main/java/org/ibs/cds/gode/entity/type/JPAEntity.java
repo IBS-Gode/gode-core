@@ -1,6 +1,7 @@
 package org.ibs.cds.gode.entity.type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.ibs.cds.gode.entity.store.StoreEntity;
 import org.ibs.cds.gode.entity.store.StoreType;
 import org.ibs.cds.gode.util.EntityUtil;
@@ -12,8 +13,11 @@ import java.util.Objects;
 
 @MappedSuperclass
 public abstract class JPAEntity<Id extends Serializable> extends StoreEntity<Id> {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date createdOn;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date updatedOn;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long appId;
     private boolean active;
 

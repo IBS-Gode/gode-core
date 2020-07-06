@@ -1,13 +1,17 @@
 package org.ibs.cds.gode.entity.view;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.Date;
 
 public abstract class TypicalEntityView<Id extends Serializable> implements EntityView<Id> {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date createdOn;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date updatedOn;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long appId;
     private boolean active;
     public transient boolean validated;

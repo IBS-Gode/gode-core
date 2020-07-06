@@ -1,6 +1,7 @@
 package org.ibs.cds.gode.entity.type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.querydsl.core.annotations.QuerySupertype;
 import org.ibs.cds.gode.entity.store.StoreEntity;
 import org.ibs.cds.gode.entity.store.StoreType;
@@ -14,8 +15,11 @@ import java.util.Objects;
 @Document
 @QuerySupertype
 public abstract class MongoEntity<Id extends Serializable> extends StoreEntity<Id> {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date createdOn;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date updatedOn;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long appId;
     private boolean active;
 

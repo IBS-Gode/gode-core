@@ -1,9 +1,12 @@
 package org.ibs.cds.gode.entity.type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
+import java.util.function.Consumer;
 
 public interface TypicalEntity<Id extends Serializable> extends Serializable{
 
@@ -35,5 +38,10 @@ public interface TypicalEntity<Id extends Serializable> extends Serializable{
     @JsonIgnore
     default String getClassifier(){
         return this == null ? null : this.getClass().getSimpleName();
+    }
+
+    @JsonIgnore
+    default Set<AutoIncrementField> autoIncrementFields(){
+        return Set.of(AutoIncrementField.of(this::getAppId,this::setAppId));
     }
 }
