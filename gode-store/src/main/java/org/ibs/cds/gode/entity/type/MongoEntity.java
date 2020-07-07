@@ -75,7 +75,7 @@ public abstract class MongoEntity<Id extends Serializable> extends StoreEntity<I
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MongoEntity<?> that = (MongoEntity<?>) o;
-        return validated == that.validated &&
+        return this.isValidated() == that.isValidated() &&
                 active == that.active &&
                 Objects.equals(getId(), that.getId()) &&
                 Objects.equals(createdOn, that.createdOn) &&

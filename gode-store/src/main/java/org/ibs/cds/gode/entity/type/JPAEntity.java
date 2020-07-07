@@ -68,7 +68,7 @@ public abstract class JPAEntity<Id extends Serializable> extends StoreEntity<Id>
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JPAEntity<?> that = (JPAEntity<?>) o;
-        return validated == that.validated &&
+        return this.isValidated() == that.isValidated() &&
                 active == that.active &&
                 Objects.equals(getId(), that.getId()) &&
                 Objects.equals(createdOn, that.createdOn) &&

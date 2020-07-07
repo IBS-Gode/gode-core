@@ -5,6 +5,7 @@ import org.ibs.cds.gode.entity.generic.DataMap;
 import org.ibs.cds.gode.entity.manager.EntityManager;
 import org.ibs.cds.gode.entity.manager.EntityViewManager;
 import org.ibs.cds.gode.entity.manager.PureEntityManager;
+import org.ibs.cds.gode.entity.store.StoreEntity;
 import org.ibs.cds.gode.entity.validation.ValidationStatus;
 import org.ibs.cds.gode.entity.view.EntityView;
 import org.ibs.cds.gode.pagination.PageContext;
@@ -55,23 +56,23 @@ public class Logic {
         return pc -> predicate -> manager -> manager.find(predicate, pc);
     }
 
-    public static <Id extends Serializable,View extends EntityView<Id>, Manager extends PureEntityManager<View, Id>>  Function<View, Function<Manager,View>> savePure(){
+    public static <Id extends Serializable,View extends StoreEntity<Id>, Manager extends PureEntityManager<View, Id>>  Function<View, Function<Manager,View>> savePure(){
         return view -> manager -> manager.save(view);
     }
 
-    public static <Id extends Serializable,View extends EntityView<Id>,Manager extends PureEntityManager<View, Id>>  Function<Id, Function<Manager,View>> findByIdPure(){
+    public static <Id extends Serializable,View extends StoreEntity<Id>,Manager extends PureEntityManager<View, Id>>  Function<Id, Function<Manager,View>> findByIdPure(){
         return id -> manager -> manager.find(id);
     }
 
-    public static <Id extends Serializable,View extends EntityView<Id>,Manager extends PureEntityManager<View, Id>>  Function<Id, Function<Manager,Boolean>> deactivatePure(){
+    public static <Id extends Serializable,View extends StoreEntity<Id>,Manager extends PureEntityManager<View, Id>>  Function<Id, Function<Manager,Boolean>> deactivatePure(){
         return id -> manager -> manager.deactivate(id);
     }
 
-    public static <View extends EntityView<?>,Manager extends PureEntityManager<View, ?>>  Function<PageContext, Function<Manager, PagedData<View>>> findAllPure(){
+    public static <View extends StoreEntity<?>,Manager extends PureEntityManager<View, ?>>  Function<PageContext, Function<Manager, PagedData<View>>> findAllPure(){
         return pc -> manager -> manager.find(pc);
     }
 
-    public static <View extends EntityView<?>,Manager extends PureEntityManager<View, ?>>  Function<PageContext,Function<Predicate, Function<Manager,PagedData<View>>>> findAllByPredicatePure(){
+    public static <View extends StoreEntity<?>,Manager extends PureEntityManager<View, ?>>  Function<PageContext,Function<Predicate, Function<Manager,PagedData<View>>>> findAllByPredicatePure(){
         return pc -> predicate -> manager -> manager.find(predicate, pc);
     }
 }

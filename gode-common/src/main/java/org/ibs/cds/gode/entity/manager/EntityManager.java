@@ -8,6 +8,7 @@ import org.ibs.cds.gode.entity.manager.operation.StateEntityManagerOperation;
 import org.ibs.cds.gode.entity.repo.Repo;
 import org.ibs.cds.gode.entity.repo.RepoType;
 import org.ibs.cds.gode.entity.store.repo.StoreEntityRepo;
+import org.ibs.cds.gode.entity.type.StateEntity;
 import org.ibs.cds.gode.entity.type.TypicalEntity;
 import org.ibs.cds.gode.entity.validation.ValidationStatus;
 import org.ibs.cds.gode.entity.view.EntityView;
@@ -15,7 +16,6 @@ import org.ibs.cds.gode.exception.KnownException;
 import org.ibs.cds.gode.pagination.PageContext;
 import org.ibs.cds.gode.pagination.PagedData;
 import org.ibs.cds.gode.status.BinaryStatus;
-import org.ibs.cds.gode.system.AppId;
 import org.ibs.cds.gode.util.PageUtils;
 
 import java.io.Serializable;
@@ -28,7 +28,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
-public abstract class EntityManager<View extends EntityView<Id>, Entity extends TypicalEntity<Id>,
+public abstract class EntityManager<View extends EntityView<Id>, Entity extends StateEntity<Id>,
         Id extends Serializable> extends EntityViewManager<View, Id>
         implements StateEntityManagerOperation<View, Entity, Id> {
 
@@ -57,10 +57,10 @@ public abstract class EntityManager<View extends EntityView<Id>, Entity extends 
     }
 
     private boolean isNewEntity(Entity entity) {
-        return entity.getCreatedOn() != null && entity.getUpdatedOn() != null && entity.getCreatedOn().equals(entity.getCreatedOn());
+        return entity.getCreatedOn() == null || entity.getUpdatedOn() == null || entity.getCreatedOn().compareTo(entity.getUpdatedOn()) == 0;
     }
 
-    private void setDefaultFields(Entity entity) {
+    protected void setDefaultFields(Entity entity) {
         Date now = new Date();
         setDefaultFields(entity, now);
     }
@@ -68,7 +68,7 @@ public abstract class EntityManager<View extends EntityView<Id>, Entity extends 
     private void setDefaultFields(Entity entity, Date time) {
         if (entity.getCreatedOn() == null) entity.setCreatedOn(time);
         entity.setUpdatedOn(time);
-        entity.autoIncrementFields().stream()
+        entity.getAutoIncrementFields().stream()
                 .filter(field-> {
                     Long currentValue = field.getFieldGetter().get();
                     return currentValue == null || currentValue.compareTo(0L) == 0;

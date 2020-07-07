@@ -5,6 +5,7 @@ import org.ibs.cds.gode.entity.relationship.RelationshipType;
 import org.ibs.cds.gode.entity.repo.OneToManyRelationshipRepo;
 import org.ibs.cds.gode.entity.repo.OneToOneRelationshipRepo;
 import org.ibs.cds.gode.entity.repo.RelationshipRepo;
+import org.ibs.cds.gode.entity.store.StoreEntity;
 import org.ibs.cds.gode.entity.type.Relationship;
 import org.ibs.cds.gode.entity.validation.ValidationFailed;
 import org.ibs.cds.gode.entity.validation.ValidationStatus;
