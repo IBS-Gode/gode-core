@@ -15,7 +15,7 @@ public interface StateEntity<Id extends Serializable> extends EntityView<Id> {
     @JsonIgnore
     default AutoIncrementField[] systemIncrementFields(){
         return new AutoIncrementField[]{
-                AutoIncrementField.of(this::getAppId, this::setAppId),
+                AutoIncrementField.of("appId",this::getAppId, this::setAppId),
         };
     }
 

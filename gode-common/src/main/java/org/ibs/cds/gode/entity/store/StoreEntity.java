@@ -54,7 +54,7 @@ public abstract class StoreEntity<Id extends Serializable> implements StateEntit
     @JsonIgnore
     public AutoIncrementField[] systemIncrementFields(){
         return new AutoIncrementField[]{
-                AutoIncrementField.of(this::getAppId, this::setAppId)
+                AutoIncrementField.of("appId",this::getAppId, this::setAppId)
         };
     }
 

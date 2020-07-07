@@ -7,10 +7,12 @@ import java.util.function.Supplier;
 
 @Data
 public class AutoIncrementField {
+
+    private final String name;
     private final Supplier<Long> fieldGetter;
     private final Consumer<Long> fieldSetter;
 
-    public static AutoIncrementField of(Supplier<Long> fieldGetter, Consumer<Long> fieldSetter){
-        return new AutoIncrementField(fieldGetter, fieldSetter);
+    public static AutoIncrementField of(String name, Supplier<Long> fieldGetter, Consumer<Long> fieldSetter){
+        return new AutoIncrementField(name, fieldGetter, fieldSetter);
     }
 }
