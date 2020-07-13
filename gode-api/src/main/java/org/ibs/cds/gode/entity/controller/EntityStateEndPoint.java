@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.ibs.cds.gode.entity.manager.EntityManager;
 import org.ibs.cds.gode.entity.operation.Executor;
 import org.ibs.cds.gode.entity.operation.Logic;
+import org.ibs.cds.gode.entity.type.StateEntity;
 import org.ibs.cds.gode.entity.type.TypicalEntity;
 import org.ibs.cds.gode.entity.view.EntityView;
 import org.ibs.cds.gode.exception.KnownException;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.Serializable;
 
-public class EntityStateEndPoint<View extends EntityView<Id>, Entity extends TypicalEntity<Id>, Manager extends EntityManager<View, Entity, Id>, Id extends Serializable>
+public class EntityStateEndPoint<View extends EntityView<Id>, Entity extends StateEntity<Id>, Manager extends EntityManager<View, Entity, Id>, Id extends Serializable>
         extends EntityProcessEndpoint<View, Manager, Id> {
 
     private static final String SAVE = "/save";

@@ -4,7 +4,7 @@ import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import org.ibs.cds.gode.entity.generic.DataMap;
 import org.ibs.cds.gode.entity.manager.operation.StateEntityManagerOperation;
-import org.ibs.cds.gode.entity.type.TypicalEntity;
+import org.ibs.cds.gode.entity.store.StoreEntity;
 import org.ibs.cds.gode.entity.validation.ValidationStatus;
 import org.ibs.cds.gode.entity.view.EntityView;
 import org.ibs.cds.gode.pagination.PageContext;
@@ -12,7 +12,7 @@ import org.ibs.cds.gode.pagination.PagedData;
 
 import java.io.Serializable;
 
-public class GraphQueryManager<Manager extends EntityManager<View, Entity, Id>, View extends EntityView<Id>, Entity extends TypicalEntity<Id>, Id extends Serializable>
+public class GraphQueryManager<Manager extends EntityManager<View, Entity, Id>, View extends EntityView<Id>, Entity extends StoreEntity<Id>, Id extends Serializable>
         implements GraphQLQueryResolver, GraphQLMutationResolver, StateEntityManagerOperation<View, Entity, Id> {
 
     private Manager manager;

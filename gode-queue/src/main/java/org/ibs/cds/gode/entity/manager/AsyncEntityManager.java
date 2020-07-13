@@ -5,6 +5,7 @@ import org.ibs.cds.gode.entity.cache.repo.CacheableEntityRepo;
 import org.ibs.cds.gode.entity.manager.operation.StateEntityManagerOperation;
 import org.ibs.cds.gode.entity.repo.RepoType;
 import org.ibs.cds.gode.entity.store.repo.StoreEntityRepo;
+import org.ibs.cds.gode.entity.type.StateEntity;
 import org.ibs.cds.gode.entity.type.TypicalEntity;
 import org.ibs.cds.gode.entity.view.EntityView;
 import org.ibs.cds.gode.queue.manager.QueueManager;
@@ -16,7 +17,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 @Slf4j
-public abstract class AsyncEntityManager<View extends EntityView<Id>, Entity extends TypicalEntity<Id>,
+public abstract class AsyncEntityManager<View extends EntityView<Id>, Entity extends StateEntity<Id>,
         Id extends Serializable> extends EntityManager<View, Entity,Id>
         implements StateEntityManagerOperation<View, Entity, Id> {
 

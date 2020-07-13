@@ -1,11 +1,11 @@
 package org.ibs.cds.gode.entity.cache;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.ibs.cds.gode.entity.type.AutoIncrementField;
 import org.ibs.cds.gode.util.EntityUtil;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
 public abstract class CacheEntity<Id extends Serializable> implements CacheableEntity<Id> {
 
@@ -16,7 +16,15 @@ public abstract class CacheEntity<Id extends Serializable> implements CacheableE
     private Long appId;
     private boolean active;
 
+    private transient volatile Set<AutoIncrementField> autoIncrementFields;
 
+    public CacheEntity() {
+        this.autoIncrementFields = new HashSet<>();
+        this.autoIncrementFields.addAll(Arrays.asList(this.systemIncrementFields()));
+        this.userIncrementFields().ifPresent(k->{
+            this.autoIncrementFields.addAll(Arrays.asList(k));
+        });
+    }
     public boolean isActive() {
         return active;
     }
@@ -83,4 +91,8 @@ public abstract class CacheEntity<Id extends Serializable> implements CacheableE
     }
 
 
+    @JsonIgnore
+    public Set<AutoIncrementField> getAutoIncrementFields() {
+        return autoIncrementFields;
+    }
 }

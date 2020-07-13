@@ -24,7 +24,9 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 
+import java.io.File;
 import java.lang.reflect.Field;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -50,7 +52,8 @@ public class IgniteCacheConfiguration {
     @Bean
     public IgniteConfiguration igniteConfiguration() {
         IgniteConfiguration config = new IgniteConfiguration();
-        config.setIgniteInstanceName(envt.getProperty("gode.cache.ignite.name"));
+        String appName = envt.getProperty("gode.cache.ignite.name", GODE_APP);
+        config.setIgniteInstanceName(appName);
         config.setPeerClassLoadingEnabled(true);
         config.setGridLogger(new Slf4jLogger());
         config.setClientMode(false);
@@ -69,7 +72,7 @@ public class IgniteCacheConfiguration {
             dataRegionConfiguration.setMaxSize(envt.getProperty("gode.cache.ignite.dataregion.size.max", Integer.class));
             dataRegionConfiguration.setPersistenceEnabled(true);
             dataStorageConfig.setDataRegionConfigurations(dataRegionConfiguration);
-            config.setConsistentId(GODE_APP);
+            config.setConsistentId(appName);
             config.setDataStorageConfiguration(dataStorageConfig);
         }
 
@@ -84,7 +87,7 @@ public class IgniteCacheConfiguration {
         config.setRebalanceThreadPoolSize(envt.getProperty("gode.cache.ignite.threads.pool.rebalance", Integer.class));
         config.setAsyncCallbackPoolSize(envt.getProperty("gode.cache.ignite.threads.pool.asynccallback", Integer.class));
         config.setPeerClassLoadingEnabled(false);
-
+        config.setWorkDirectory(Paths.get(".").toAbsolutePath().normalize().toString().concat(File.separator).concat(appName));
         BinaryConfiguration binaryConfiguration = new BinaryConfiguration();
         binaryConfiguration.setCompactFooter(false);
 
