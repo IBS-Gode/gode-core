@@ -170,6 +170,18 @@ public enum KnownException {
         public GodeRuntimeException provide(Throwable e, Serializable details) {
             return new GodeRuntimeException(new Error(getCode(), getMessage(), details),getMessage());
         }
+    },
+    HTTP_EXCEPTION(13, "Failed to invoke api call"){
+        private String message = getMessage();
+        @Override
+        public GodeRuntimeException provide(Serializable details) {
+            return new GodeRuntimeException(new Error(getCode(), getMessage(), details), message);
+        }
+
+        @Override
+        public GodeRuntimeException provide(Throwable e, Serializable details) {
+            return new GodeRuntimeException(new Error(getCode(), getMessage(), details),getMessage());
+        }
     };
 
     private final int code;

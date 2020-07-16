@@ -1,0 +1,106 @@
+request:
+- name: CreateRepo
+  path: /orgs/{org}/repos
+  requestType: POST
+  header:
+    Content-Type: application/json
+    accept: application/json
+  body:
+    file: pipeline/git/create_repo.json
+  response:
+    - name: cloneUrl
+      value_at: clone_url
+      type: String
+  variables:
+    - name: auth
+      value_as: access_token
+      type: String
+      mandatory: true
+      default: ''
+      where:
+      - queryParams
+    - name: org
+      value_as: org
+      type: String
+      mandatory: true
+      default: ibs
+      where:
+      - pathParams
+    - name: auto_init
+      value_as: auto_init
+      type: Boolean
+      default: true
+      where:
+      - body
+    - name: default_branch
+      value_as: default_branch
+      type: String
+      default: master
+      where:
+      - body
+    - name: description
+      value_as: description
+      type: String
+      mandatory: true
+      where:
+      - body
+    - name: gitignores
+      value_as: gitignores
+      type: String
+      default: Maven
+      where:
+      - body
+    - name: issue_labels
+      type: String
+      default: Default
+      where:
+      - body
+    - name: license
+      type: String
+      default: MIT
+      where:
+      - body
+    - name: repo
+      value_as: name
+      type: String
+      mandatory: true
+      where:
+      - body
+    - name: private
+      type: Boolean
+      default: false
+      where:
+      - body
+    - name: readme
+      type: String
+      default: Default
+      where:
+      - body
+- name: CheckRepo
+  requestType: GET
+  path: /repos/{org}/{repo}
+  header:
+    Content-Type: application/json
+    accept: application/json
+  response:
+    - name: cloneUrl
+      value_at: clone_url
+      type: String
+  variables:
+    - name: auth
+      value_as: access_token
+      type: String
+      mandatory: true
+      default: ''
+      where:
+      - queryParams
+    - name: org
+      type: String
+      where:
+      - pathParams
+    - name: repo
+      type: String
+      mandatory: true
+      where:
+      - pathParams
+   

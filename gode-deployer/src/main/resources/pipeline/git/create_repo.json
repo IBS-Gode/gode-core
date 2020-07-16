@@ -1,0 +1,11 @@
+{
+  "auto_init": ${auto_init},
+  "default_branch": "${default_branch}",
+  "description": "${description}",
+  "gitignores": "${gitignores}",
+  "issue_labels": "${issue_labels}",
+  "license": "${license}",
+  "name": "${name}",
+  "private": ${private},
+  "readme": "${readme}"
+}
