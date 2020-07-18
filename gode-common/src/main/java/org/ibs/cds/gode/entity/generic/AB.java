@@ -3,8 +3,10 @@ package org.ibs.cds.gode.entity.generic;
 import lombok.Data;
 import org.ibs.cds.gode.util.EntityUtil;
 
+import java.io.Serializable;
+
 @Data
-public class AB<A,B> {
+public class AB<A,B> implements Serializable {
     private final A a;
     private final B b;
 

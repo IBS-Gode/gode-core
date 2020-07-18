@@ -10,10 +10,12 @@ import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.RemoteAddCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.ibs.cds.gode.exception.KnownException;
+import org.ibs.cds.gode.util.StreamUtils;
 
 public class LocalGit {
 
@@ -107,9 +109,9 @@ public class LocalGit {
         }
     }
 
-    public boolean commit(String message, String username, String email) {
+    public String commit(String message, String username, String email) {
         try {
-            return git.commit().setMessage(message).setAuthor(username, email).call() != null;
+            return git.commit().setMessage(message).setAuthor(username, email).call().toString();
         } catch (GitAPIException ex) {
             throw KnownException.SYSTEM_FAILURE.provide(ex);
         }
@@ -125,7 +127,7 @@ public class LocalGit {
 
     public boolean push() {
         try {
-            return git.push().setCredentialsProvider(remoteGit.credentials()).call() != null;
+            return StreamUtils.from(git.push().setCredentialsProvider(remoteGit.credentials()).call()) != null;
         } catch (GitAPIException ex) {
             throw KnownException.SYSTEM_FAILURE.provide(ex);
         }
