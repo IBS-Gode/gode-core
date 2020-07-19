@@ -1,7 +1,17 @@
 package org.ibs.cds.gode.entity.manager;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Query;
+import com.querydsl.core.SimpleQuery;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.ibs.cds.gode.entity.type.TypicalEntity;
 import org.ibs.cds.gode.entity.view.EntityView;
+import org.ibs.cds.gode.pagination.PageContext;
+import org.ibs.cds.gode.pagination.PagedData;
+import org.ibs.cds.gode.pagination.QueryContext;
+import org.ibs.cds.gode.pagination.ResponsePageContext;
 import org.ibs.cds.gode.test.mock.Mock;
 import org.ibs.cds.gode.test.unit.GodeUnitTest;
 import org.ibs.cds.gode.util.RandomUtils;
@@ -10,7 +20,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public abstract class EntityManagerTest<T extends EntityManager, V extends EntityView<Id>, E extends TypicalEntity<Id>, Id extends Serializable>
         extends GodeUnitTest {
@@ -69,6 +82,51 @@ public abstract class EntityManagerTest<T extends EntityManager, V extends Entit
         storeRepo().ifPresent(k -> Mock.when(k, "save").thenReturn(e));
         cacheRepo().ifPresent(k -> Mock.when(k, "save").thenReturn(e));
         Assert.assertEquals(true, entityManager.deactivate(id));
+    }
+
+    @Test
+    public void testFindAll() {
+        List<E> entities = IntStream.range(1, 12).boxed()
+                .map(k-> {
+                    E e = entity();
+                    e.setId(id());
+                    return e;
+                })
+                .collect(Collectors.toList());
+        PageContext context = PageContext.std();
+        PagedData<E> entityPage = new PagedData<>();
+        entityPage.setData(entities.subList(0, 10));
+        QueryContext queryContext = new QueryContext();
+        queryContext.setPageContext(new ResponsePageContext(context));
+        entityPage.setContext(queryContext);
+        storeRepo().ifPresent(j -> Mock.when(j, "findAll", context).thenReturn(entityPage));
+        PagedData<V> actual = entityManager.find(context);
+        Assert.assertEquals(context.getPageSize(), actual.getContext().getPageContext().getPageSize());
+        Assert.assertEquals(context.getPageSize(), actual.getData().size());
+        Assert.assertEquals(entities.get(0).getId(), actual.getData().get(0).getId());
+    }
+
+    @Test
+    public void testFindAllWithWhereClause() {
+        List<E> entities = IntStream.range(1, 12).boxed()
+                .map(k-> {
+                    E e = entity();
+                    e.setId(id());
+                    return e;
+                })
+                .collect(Collectors.toList());
+        PageContext context = PageContext.std();
+        PagedData<E> entityPage = new PagedData<>();
+        entityPage.setData(entities.subList(0, 10));
+        QueryContext queryContext = new QueryContext();
+        queryContext.setPageContext(new ResponsePageContext(context));
+        entityPage.setContext(queryContext);
+        Predicate expression = new BooleanBuilder().getValue();
+        storeRepo().ifPresent(j -> Mock.when(j, "findAll", expression, context).thenReturn(entityPage));
+        PagedData<V> actual = entityManager.find(expression, context);
+        Assert.assertEquals(context.getPageSize(), actual.getContext().getPageContext().getPageSize());
+        Assert.assertEquals(context.getPageSize(), actual.getData().size());
+        Assert.assertEquals(entities.get(0).getId(), actual.getData().get(0).getId());
     }
 
     public abstract Optional<Class<?>> storeRepo();

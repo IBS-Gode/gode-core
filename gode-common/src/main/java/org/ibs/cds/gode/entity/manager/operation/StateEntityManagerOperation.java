@@ -36,11 +36,11 @@ public interface StateEntityManagerOperation<View extends EntityView<Id>, Entity
     boolean deactivate(Id id);
 
     default PagedData<View> transformEntityPage(PagedData<Entity> pagedData) {
-        return new PagedData(pagedData.stream().map(Optional::ofNullable).map(this::transformEntity).collect(Collectors.toList()), pagedData.getContext());
+        return new PagedData(pagedData.stream().map(Optional::ofNullable).map(this::transformEntity).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()), pagedData.getContext());
     }
 
     default PagedData<Entity> transformViewPage(PagedData<View> pagedData) {
-        return new PagedData(pagedData.stream().map(Optional::ofNullable).map(this::transformView).collect(Collectors.toList()), pagedData.getContext());
+        return new PagedData(pagedData.stream().map(Optional::ofNullable).map(this::transformView).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()), pagedData.getContext());
     }
 
     default View transform(Entity entity){
