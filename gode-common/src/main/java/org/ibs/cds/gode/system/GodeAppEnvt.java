@@ -12,7 +12,7 @@ public class GodeAppEnvt extends GodeConstant{
     private AtomicReference<ConfigurableApplicationContext> applicationContext;
     private Environment environment;
 
-    private GodeAppEnvt(ConfigurableApplicationContext applicationContext){
+    public GodeAppEnvt(ConfigurableApplicationContext applicationContext){
         this.applicationContext = new AtomicReference<>(applicationContext);
         this.environment = applicationContext.getEnvironment();
     };
