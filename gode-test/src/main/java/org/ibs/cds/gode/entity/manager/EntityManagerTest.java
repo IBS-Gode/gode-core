@@ -3,7 +3,7 @@ package org.ibs.cds.gode.entity.manager;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import lombok.SneakyThrows;
-import org.ibs.cds.gode.entity.type.TypicalEntity;
+import org.ibs.cds.gode.entity.type.StateEntity;
 import org.ibs.cds.gode.entity.view.EntityView;
 import org.ibs.cds.gode.exception.Error;
 import org.ibs.cds.gode.exception.GodeRuntimeException;
@@ -12,11 +12,10 @@ import org.ibs.cds.gode.pagination.PagedData;
 import org.ibs.cds.gode.pagination.QueryContext;
 import org.ibs.cds.gode.pagination.ResponsePageContext;
 import org.ibs.cds.gode.test.mock.Mock;
-import org.ibs.cds.gode.test.unit.GodeUnitTest;
 import org.ibs.cds.gode.util.RandomUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,13 +23,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public abstract class EntityManagerTest<T extends EntityManager, V extends EntityView<Id>, E extends TypicalEntity<Id>, Id extends Serializable>
-        extends GodeUnitTest {
+public abstract class EntityManagerTest<T extends EntityManager<V,E,Id>, V extends EntityView<Id>, E extends StateEntity<Id>, Id extends Serializable>
+        extends EntityViewManagerTest<T,V,Id> {
 
     private T entityManager;
 
 
-    @Before @Override
+    @BeforeMethod
+    @Override
     public void initTest() {
         storeRepo().ifPresent(Mock::of);
         cacheRepo().ifPresent(Mock::of);
@@ -132,10 +132,7 @@ public abstract class EntityManagerTest<T extends EntityManager, V extends Entit
 
     public abstract Optional<Class> storeRepo();
     public abstract Optional<Class> cacheRepo();
-    public abstract Class<T> managerClass();
-    public abstract Class<V> viewClass();
     public abstract E entity();
-    public abstract Class<Id> idClass();
 
     public Id id(){
         return RandomUtils.unique(idClass());

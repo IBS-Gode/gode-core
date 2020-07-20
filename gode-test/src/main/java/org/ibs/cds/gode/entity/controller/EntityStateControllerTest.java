@@ -2,6 +2,7 @@ package org.ibs.cds.gode.entity.controller;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+import lombok.SneakyThrows;
 import org.ibs.cds.gode.entity.manager.EntityManager;
 import org.ibs.cds.gode.entity.view.EntityView;
 import org.ibs.cds.gode.pagination.PageContext;
@@ -9,18 +10,21 @@ import org.ibs.cds.gode.pagination.PagedData;
 import org.ibs.cds.gode.pagination.QueryContext;
 import org.ibs.cds.gode.pagination.ResponsePageContext;
 import org.ibs.cds.gode.test.mock.Mock;
+import org.ibs.cds.gode.test.unit.AsyncTest;
 import org.ibs.cds.gode.util.APIArgument;
 import org.ibs.cds.gode.web.Request;
 import org.ibs.cds.gode.web.Response;
 import org.ibs.cds.gode.web.context.RequestContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class EntityStateControllerTest<C extends EntityStateEndPoint<V,?,M,Id>, M extends EntityManager<V,?,Id> ,V extends EntityView<Id>, Id extends Serializable> extends EntityProcessControllerTest<C,M,V,Id> {
-    
+
     @Test
     public void testSave(){
         V view = view();
@@ -102,5 +106,20 @@ public abstract class EntityStateControllerTest<C extends EntityStateEndPoint<V,
         Assert.assertEquals(pageContext.getPageSize(), response.getData().getContext().getPageContext().getPageSize());
         Assert.assertEquals(view.getId(), response.getData().getData().get(0).getId());
         Assert.assertEquals("predicate", response.getData().getContext().getPredicate());
+    }
+
+    public abstract Optional<Class> storeRepo();
+    public abstract Optional<Class> cacheRepo();
+    public boolean isAsync(){
+        return false;
+    };
+
+    @SneakyThrows
+    public C controller(){
+        Class<M> managerClass = managerClass();
+        storeRepo().ifPresent(Mock::partial);
+        cacheRepo().ifPresent(Mock::partial);
+        if(isAsync()) AsyncTest.initQueueRepository();
+        return controllerClass().getConstructor(managerClass).newInstance(Mock.fresh(managerClass));
     }
 }

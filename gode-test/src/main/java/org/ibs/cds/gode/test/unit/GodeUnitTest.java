@@ -1,18 +1,14 @@
 package org.ibs.cds.gode.test.unit;
 
 import org.ibs.cds.gode.counter.CounterGenerator;
-import org.ibs.cds.gode.queue.manager.QueueRepo;
-import org.ibs.cds.gode.queue.manager.QueueRepoProperties;
-import org.ibs.cds.gode.queue.manager.QueueRepository;
 import org.ibs.cds.gode.system.GodeAppEnvtTest;
 import org.ibs.cds.gode.test.Test;
 import org.ibs.cds.gode.test.TestType;
 import org.ibs.cds.gode.test.mock.Mock;
 import org.ibs.cds.gode.util.RandomUtils;
-import org.junit.BeforeClass;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
+import org.testng.annotations.BeforeClass;
 
 import java.math.BigInteger;
 import java.util.concurrent.atomic.AtomicBoolean;

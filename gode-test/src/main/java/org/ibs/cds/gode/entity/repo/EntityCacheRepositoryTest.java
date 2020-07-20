@@ -1,13 +1,15 @@
 package org.ibs.cds.gode.entity.repo;
 
 import com.mysema.commons.lang.Pair;
+import lombok.SneakyThrows;
 import org.ibs.cds.gode.entity.cache.repo.CacheableEntityRepo;
 import org.ibs.cds.gode.entity.store.StoreEntity;
 import org.ibs.cds.gode.test.mock.Mock;
 import org.ibs.cds.gode.test.unit.GodeUnitTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.ibs.cds.gode.util.RandomUtils;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,12 +23,20 @@ public abstract class EntityCacheRepositoryTest<T extends CacheableEntityRepo<E,
 
     private T repository;
 
-    public abstract T initRepository();
+    @SneakyThrows
+    public T initRepository(){
+        return repositoryClass().getConstructor(repoClass()).newInstance(Mock.partial(repoClass()));
+    };
+
     public abstract Class repoClass();
-    public abstract Id id();
+    public abstract Class<T> repositoryClass();
+    public abstract Class<Id> idClass();
+    public Id id(){
+        return RandomUtils.unique(idClass());
+    };
     public abstract E entity();
 
-    @Before
+    @BeforeMethod
     @Override
     public void initTest() {
         repository = initRepository();
@@ -61,7 +71,7 @@ public abstract class EntityCacheRepositoryTest<T extends CacheableEntityRepo<E,
         e.setActive(false);
         Mock.when(repoClass(), "findById", id).thenReturn(Optional.of(e));
         Optional<E> actual = repository.findById(id);
-        Assert.assertFalse("Inactive entity should not given",actual.isPresent());
+        Assert.assertFalse(actual.isPresent(), "Inactive entity should not given");
     }
 
     @Test

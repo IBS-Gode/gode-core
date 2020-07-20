@@ -1,13 +1,15 @@
 package org.ibs.cds.gode.entity.repo;
 
 import com.mysema.commons.lang.Pair;
+import lombok.SneakyThrows;
 import org.ibs.cds.gode.entity.store.StoreEntity;
 import org.ibs.cds.gode.entity.store.repo.StoreEntityRepo;
 import org.ibs.cds.gode.test.mock.Mock;
 import org.ibs.cds.gode.test.unit.GodeUnitTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.ibs.cds.gode.util.RandomUtils;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.io.Serializable;
 import java.util.*;
@@ -18,12 +20,20 @@ public abstract class EntityStoreRepositoryTest<T extends StoreEntityRepo<E,Id>,
 
     private T repository;
 
-    public abstract T initRepository();
-    public abstract Class repoClass();
-    public abstract Id id();
-    public abstract E entity();
+    @SneakyThrows
+    public T initRepository(){
+        return repositoryClass().getConstructor(repoClass()).newInstance(Mock.partial(repoClass()));
+    };
 
-    @Before
+    public abstract Class repoClass();
+    public abstract Class<Id> idClass();
+    public Id id(){
+       return RandomUtils.unique(idClass());
+    };
+    public abstract E entity();
+    public abstract Class<T> repositoryClass();
+
+    @BeforeMethod
     @Override
     public void initTest() {
       repository = initRepository();
@@ -58,7 +68,7 @@ public abstract class EntityStoreRepositoryTest<T extends StoreEntityRepo<E,Id>,
         e.setActive(false);
         Mock.when(repoClass(), "findById", id).thenReturn(Optional.of(e));
         Optional<E> actual = repository.findById(id);
-        Assert.assertFalse("Inactive entity should not given",actual.isPresent());
+        Assert.assertFalse(actual.isPresent(), "Inactive entity should not given");
     }
 
     @Test
@@ -86,7 +96,7 @@ public abstract class EntityStoreRepositoryTest<T extends StoreEntityRepo<E,Id>,
         e.setAppId(appId);
         Mock.when(repoClass(), "findByAppId", appId).thenReturn(Optional.of(e));
         Optional<E> actual = repository.findByAppId(appId);
-        Assert.assertFalse("Inactive entity should not given",actual.isPresent());
+        Assert.assertFalse(actual.isPresent(), "Inactive entity should not given");
     }
 
     @Test
