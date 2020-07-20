@@ -75,14 +75,7 @@ public class MockClass<T> {
             if(parameterCount == 0) return defaultMethod(pf.createClass(), mh);
             List<Pair<Object, Class>> params = Arrays
                     .stream(constructor.getParameterTypes())
-                    .map(k->
-                    {
-                        if(Mock.getClassBank().containsKey(k)){
-                            Mock.of(k);
-                        }
-                        return Pair.of(Mock.getClassBank().get(k), k);
-                    }
-                    )
+                    .map(k-> Pair.of( Mock.of(k), k))
                     .collect(Collectors.toList());
             if(CollectionUtils.size(params) == parameterCount){
                 return (T) pf.create(params.stream().map(k -> k.getValue()).toArray(Class[]::new),params.stream().map(k->k.getKey()).toArray(), mh);

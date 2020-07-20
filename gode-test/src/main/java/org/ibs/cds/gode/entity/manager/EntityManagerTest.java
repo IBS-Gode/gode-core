@@ -1,13 +1,12 @@
 package org.ibs.cds.gode.entity.manager;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Query;
-import com.querydsl.core.SimpleQuery;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import lombok.SneakyThrows;
 import org.ibs.cds.gode.entity.type.TypicalEntity;
 import org.ibs.cds.gode.entity.view.EntityView;
+import org.ibs.cds.gode.exception.Error;
+import org.ibs.cds.gode.exception.GodeRuntimeException;
 import org.ibs.cds.gode.pagination.PageContext;
 import org.ibs.cds.gode.pagination.PagedData;
 import org.ibs.cds.gode.pagination.QueryContext;
@@ -30,7 +29,8 @@ public abstract class EntityManagerTest<T extends EntityManager, V extends Entit
 
     private T entityManager;
 
-    @Before
+
+    @Before @Override
     public void initTest() {
         storeRepo().ifPresent(Mock::of);
         cacheRepo().ifPresent(Mock::of);
@@ -99,6 +99,7 @@ public abstract class EntityManagerTest<T extends EntityManager, V extends Entit
         QueryContext queryContext = new QueryContext();
         queryContext.setPageContext(new ResponsePageContext(context));
         entityPage.setContext(queryContext);
+        cacheRepo().ifPresent(j -> Mock.when(j, "findAll", context).thenReturn(entityPage));
         storeRepo().ifPresent(j -> Mock.when(j, "findAll", context).thenReturn(entityPage));
         PagedData<V> actual = entityManager.find(context);
         Assert.assertEquals(context.getPageSize(), actual.getContext().getPageContext().getPageSize());
@@ -129,10 +130,30 @@ public abstract class EntityManagerTest<T extends EntityManager, V extends Entit
         Assert.assertEquals(entities.get(0).getId(), actual.getData().get(0).getId());
     }
 
-    public abstract Optional<Class<?>> storeRepo();
-    public abstract Optional<Class<?>> cacheRepo();
+    public abstract Optional<Class> storeRepo();
+    public abstract Optional<Class> cacheRepo();
+    public abstract Class<T> managerClass();
     public abstract Class<V> viewClass();
     public abstract E entity();
-    public abstract Id id();
-    public abstract T manager();
+    public abstract Class<Id> idClass();
+
+    public Id id(){
+        return RandomUtils.unique(idClass());
+    }
+
+    @SneakyThrows
+    public T manager(){
+        if(storeRepo().isPresent() && cacheRepo().isPresent()){
+            return managerClass().getDeclaredConstructor(storeRepo().get(), cacheRepo().get())
+                    .newInstance(Mock.partial(storeRepo().get()), Mock.partial(cacheRepo().get()));
+        }else if(storeRepo().isPresent()){
+            return managerClass().getDeclaredConstructor(storeRepo().get())
+                    .newInstance(Mock.partial(storeRepo().get()));
+        }else if(cacheRepo().isPresent()){
+           return managerClass().getDeclaredConstructor(cacheRepo().get())
+                    .newInstance(Mock.partial(cacheRepo().get()));
+        }else{
+            throw new GodeRuntimeException(new Error(-999, "No configuration for manager",null));
+        }
+    }
 }

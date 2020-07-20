@@ -30,6 +30,14 @@ public abstract class AsyncEntityManager<View extends EntityView<Id>, Entity ext
         queueManager.subscribe(storeSave());
     }
 
+    public <StoreRepo extends StoreEntityRepo<Entity, Id>, CacheRepo extends CacheableEntityRepo<Entity, Id>>
+    AsyncEntityManager(String context, StoreRepo storeEntityRepo, CacheRepo cacheableEntityRepo,
+                       QueueManager queueManager) {
+        super(storeEntityRepo, cacheableEntityRepo);
+        this.queueManager = queueManager;
+        this.queueManager.subscribe(storeSave());
+    }
+
     @NotNull
     protected Consumer<Optional<Entity>> storeSave() {
         return opts->opts.ifPresent(entity->{

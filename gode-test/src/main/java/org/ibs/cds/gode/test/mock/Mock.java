@@ -19,8 +19,12 @@ public class Mock {
     }
 
     public static <T> T of(Class<T> classType, Prejudice... prejudices){
-        MockClass<T> mock = getMockClass(classType, prejudices);
-        return provideMock(classType, mock);
+        if(mocks.containsKey(classType)) return (T) classBank.get(classType);
+        return provideMock(classType, getMockClass(classType, prejudices));
+    }
+
+    public static <T> T fresh(Class<T> classType, Prejudice... prejudices){
+        return provideMock(classType, getMockClass(classType, prejudices));
     }
 
     public static <T> T data(Class<T> classType){
@@ -40,6 +44,11 @@ public class Mock {
     }
 
     public static <T> T partial(Class<T> classType, Prejudice... prejudices){
+        if(mocks.containsKey(classType)){
+            MockClass mock = mocks.get(classType);
+            mock.trueMethodCall();
+            return (T) classBank.get(classType);
+        }
         MockClass<T> mock = getMockClass(classType, prejudices);
         mock.trueMethodCall();
         return provideMock(classType, mock);
