@@ -30,5 +30,8 @@ public class StoreEssential {
     public boolean isMongo(){
         return type == StoreType.MONGODB;
     }
+    public boolean isCassandra(){
+        return type == StoreType.CASSANDRA;
+    }
 
 }

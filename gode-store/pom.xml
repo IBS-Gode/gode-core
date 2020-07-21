@@ -39,6 +39,17 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-cassandra</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.datastax.cassandra</groupId>
+            <artifactId>cassandra-driver-core</artifactId>
+            <version>3.7.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-core</artifactId>
             <version>${mongo.driver}</version>
@@ -89,6 +100,8 @@
                             <processors>
                                 <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
                                 <processor>com.querydsl.apt.morphia.MorphiaAnnotationProcessor</processor>
+                                <processor>com.querydsl.apt.QuerydslAnnotationProcessor</processor>
+
                             </processors>
                         </configuration>
                     </execution>
