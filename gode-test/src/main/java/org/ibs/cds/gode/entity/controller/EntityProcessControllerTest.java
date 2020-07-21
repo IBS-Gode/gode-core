@@ -14,7 +14,6 @@ import org.ibs.cds.gode.web.Response;
 import org.ibs.cds.gode.web.context.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.Serializable;

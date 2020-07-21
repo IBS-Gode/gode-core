@@ -34,6 +34,16 @@ public class StoreUtils {
                         new JavaArtifact("Id","org.springframework.data.annotation"),
                         type
                 );
+            case CASSANDRA:
+                return new StoreEssential(
+                        new JavaArtifact("Table", "org.springframework.data.cassandra.core.mapping"),
+                        new JavaArtifact("CassandraEntity", ENTITY_PATH),
+                        new JavaArtifact("CassandraEntityRepo", REPO_PATH),
+                        new JavaArtifact("MarkCassandraRepo","org.ibs.cds.gode.entity.store"),
+                        new JavaArtifact("CassandraEntityRepository",REPO_PATH),
+                        new JavaArtifact("PrimaryKey","org.springframework.data.cassandra.core.mapping"),
+                        type
+                );
         }
         return  null;
     }

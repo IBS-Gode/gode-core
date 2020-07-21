@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.ibs.cds.gode.entity.type.AutoIncrementField;
 import org.ibs.cds.gode.entity.type.StateEntity;
 import org.ibs.cds.gode.util.EntityUtil;
+import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -13,7 +14,8 @@ import java.util.Set;
 public abstract class StoreEntity<Id extends Serializable> implements StateEntity<Id> {
 
     private transient boolean validated;
-    private transient final Set<AutoIncrementField> autoIncrementFields;
+    private @Transient
+    transient final Set<AutoIncrementField> autoIncrementFields;
 
     public StoreEntity() {
         this.autoIncrementFields = new HashSet<>();
