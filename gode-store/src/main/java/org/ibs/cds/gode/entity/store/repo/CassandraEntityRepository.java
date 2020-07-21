@@ -42,7 +42,7 @@ public abstract class CassandraEntityRepository<Entity extends CassandraEntity<I
 
     @Override
     public PagedData<Entity> findByActive(boolean enabled, PageContext pageable) {
-        return PageUtils.getData(pc-> repo.findByActive(enabled, pc), pageable);
+        return PageUtils.getData(pc-> repo.findByActive(enabled, pc), repo.countByActive(enabled), pageable);
     }
 
     @Override
