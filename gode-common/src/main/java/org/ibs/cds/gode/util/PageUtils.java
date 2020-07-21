@@ -7,6 +7,7 @@ import org.ibs.cds.gode.entity.type.TypicalEntity;
 import org.ibs.cds.gode.pagination.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.CollectionUtils;
 
@@ -20,6 +21,23 @@ public class PageUtils {
 
     public static <T> PagedData<T> fromPage(Page<T> page) {
         return fromPage(page, null);
+    }
+    public static <T> PagedData<T> fromSlice(Slice<T> slice, long totalCount)
+    {
+        PagedData<T> pagedData = new PagedData<T>();
+        pagedData.setData(slice.getContent());
+        int pageSize = slice.getPageable().getPageSize();
+        ResponsePageContext ctx = new ResponsePageContext(pageSize);
+        ctx.setNext(slice.hasNext());
+        ctx.setPrevious(slice.hasPrevious());
+        ctx.setPageNumber(slice.getPageable().getPageNumber() + 1);
+        ctx.setTotalCount(totalCount);
+        ctx.setTotalPages(pageSize > 0 ? totalCount/pageSize : pageSize);
+        Set<Sortable> sortOrders = new HashSet<>();
+        slice.getSort().forEach(order->sortOrders.add(fromSort(order)));
+        ctx.setSortOrder(sortOrders);
+        pagedData.setContext(new QueryContext(ctx, null));
+        return pagedData;
     }
 
     public static <T> PagedData<T> fromPage(Page<T> page, Predicate predicate) {
@@ -48,6 +66,10 @@ public class PageUtils {
 
     public static <T extends TypicalEntity<?>> PagedData<T> getData(Function<PageRequest, Page<T>> function, PageContext ctx) {
         return fromPage(function.apply(toBaseRequest(ctx)));
+    }
+
+    public static <T extends TypicalEntity<?>> PagedData<T> getData(Function<PageRequest, Slice<T>> function, long totalCount ,PageContext ctx) {
+        return fromSlice(function.apply(toBaseRequest(ctx)), totalCount);
     }
 
     public static <T extends TypicalEntity<?>> PagedData<T> getData(Function<PageRequest, Page<T>> function, PageContext ctx, Predicate predicate) {

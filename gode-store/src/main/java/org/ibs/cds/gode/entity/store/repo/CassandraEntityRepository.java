@@ -3,18 +3,13 @@ package org.ibs.cds.gode.entity.store.repo;
 import com.querydsl.core.types.Predicate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.ibs.cds.gode.entity.type.CassandraEntity;
-import org.ibs.cds.gode.entity.type.JPAEntity;
 import org.ibs.cds.gode.pagination.PageContext;
 import org.ibs.cds.gode.pagination.PagedData;
 import org.ibs.cds.gode.util.PageUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class CassandraEntityRepository<Entity extends CassandraEntity<Id>, Id extends Serializable, Repo extends CassandraEntityRepo<Entity,Id>> implements StoreEntityRepo<Entity,Id> {
@@ -57,17 +52,12 @@ public abstract class CassandraEntityRepository<Entity extends CassandraEntity<I
 
     @Override
     public PagedData<Entity> findAll(PageContext context) {
-        return null;
+        long count = repo.count();
+        return PageUtils.getData( pc-> repo.findAll(pc), count, context);
     }
-    //
-    Page<Entity> convertToPage(Pageable var1){
-        Page<Entity> page = new PageImpl<>(repo.findAll(var1).stream().map(x->x).collect(Collectors.toList()));
-        return  page;
-    }
-
 
     @Override
     public PagedData<Entity> findAll(Predicate predicate, PageContext context) {
-        return null;
+        return this.findAll(context);
     }
 }

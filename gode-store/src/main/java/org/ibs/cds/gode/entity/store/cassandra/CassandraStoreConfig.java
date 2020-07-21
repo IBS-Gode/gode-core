@@ -2,6 +2,7 @@ package org.ibs.cds.gode.entity.store.cassandra;
 
 import com.datastax.driver.core.AuthProvider;
 import com.datastax.driver.core.PlainTextAuthProvider;
+import org.ibs.cds.gode.entity.store.MarkCassandraRepo;
 import org.ibs.cds.gode.entity.store.MarkJPARepo;
 import org.ibs.cds.gode.entity.store.condition.CassandraStoreEnabler;
 import org.ibs.cds.gode.entity.store.condition.JPAStoreEnabler;
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Conditional(CassandraStoreEnabler.class)
 @EnableJpaRepositories(basePackages = GodeConstant.ENTITY_BASE_PACKAGE_NAME,
         includeFilters = {
-                @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = MarkJPARepo.class)
+                @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = MarkCassandraRepo.class)
         })
 @ComponentScan(GodeConstant.GODE_BASE_PACKAGE_NAME)
 @PropertySource(GodeConstant.GODE_PROPERTIES)
