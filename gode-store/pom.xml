@@ -44,15 +44,18 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.datastax.cassandra</groupId>
             <artifactId>cassandra-driver-core</artifactId>
-            <version>3.7.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-core</artifactId>
-            <version>${mongo.driver}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -73,13 +76,11 @@
         <dependency>
             <groupId>org.bitbucket.gt_tech</groupId>
             <artifactId>spring-data-querydsl-value-operators</artifactId>
-            <version>4.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.mongodb.morphia</groupId>
             <artifactId>morphia</artifactId>
-            <version>1.3.2</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
