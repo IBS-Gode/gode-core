@@ -2,7 +2,6 @@ package org.ibs.cds.gode.entity.manager;
 
 import org.ibs.cds.gode.entity.relationship.RelationshipType;
 import org.ibs.cds.gode.entity.repo.ManyToAnyRelationshipRepo;
-import org.ibs.cds.gode.entity.store.StoreEntity;
 import org.ibs.cds.gode.entity.type.Relationship;
 import org.ibs.cds.gode.entity.view.EntityView;
 import org.ibs.cds.gode.entity.view.RelationshipView;

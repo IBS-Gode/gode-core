@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.ibs.cds.gode.entity.function.EntityValidation;
 
 @Slf4j
 public abstract class EntityManager<View extends EntityView<Id>, Entity extends StateEntity<Id>,
@@ -60,6 +61,11 @@ public abstract class EntityManager<View extends EntityView<Id>, Entity extends 
         return entity.getCreatedOn() == null || entity.getUpdatedOn() == null || entity.getCreatedOn().compareTo(entity.getUpdatedOn()) == 0;
     }
 
+    @Override
+     public ValidationStatus validateEntity(Entity entity){
+        return validationFunction().map(k->k.validateEntity(entity)).orElseGet(ValidationStatus::ok);
+    }
+     
     protected void setDefaultFields(Entity entity) {
         Date now = new Date();
         setDefaultFields(entity, now);
@@ -191,4 +197,6 @@ public abstract class EntityManager<View extends EntityView<Id>, Entity extends 
                     return r.save(x);
                 }).orElse(null);
     }
+    
+    public abstract <Function extends EntityValidation<Entity>> Optional<Function> validationFunction();
 }

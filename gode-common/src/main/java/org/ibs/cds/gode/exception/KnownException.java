@@ -194,7 +194,22 @@ public enum KnownException {
         public GodeRuntimeException provide(Throwable e, Serializable details) {
             return new GodeRuntimeException(new Error(getCode(), getMessage(), details),getMessage());
         }
-    };
+    },
+    APP_VALIDATIONS_FAILED(15, "App validation failed"){
+        private String message = getMessage();
+        @Override
+        public AppValidationFailedException provide(Serializable details) {
+            return new AppValidationFailedException(new Error(getCode(), getMessage(), details), message);
+        }
+
+        @Override
+        public AppValidationFailedException provide(Throwable e, Serializable details) {
+            return new AppValidationFailedException(new Error(getCode(), getMessage(), details),getMessage());
+        }
+    }
+    
+    
+    ;
 
     private final int code;
     private final String message;

@@ -7,24 +7,23 @@ import org.ibs.cds.gode.entity.validation.ValidationStatus;
 import org.ibs.cds.gode.entity.view.EntityView;
 
 import java.io.Serializable;
+import java.util.Optional;
+import org.ibs.cds.gode.entity.function.EntityFunctionBody;
 
 @Slf4j
-public class EntityViewManager<View extends EntityView<Id>,
-        Id extends Serializable>
+public abstract class EntityViewManager<View extends EntityView<Id>, Id extends Serializable>
         implements ViewEntityManagerOperation<View, Id> {
-
-    public EntityViewManager(){
-
-    }
-
-
+    
     @Override
     public DataMap process(View view) {
-        return DataMap.empty();
+        return processFunction().map(k->k.run(view)).orElseGet(DataMap::empty);
     }
 
     @Override
     public ValidationStatus validateView(View view) {
-        return ValidationStatus.ok();
+        return processFunction().map(k->k.validate(view)).orElseGet(ValidationStatus::ok);
     }
+
+    public abstract <Function extends EntityFunctionBody<View>> Optional<Function> processFunction();
+
 }

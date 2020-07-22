@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.Optional;
+import org.ibs.cds.gode.entity.function.EntityFunctionBody;
+import org.ibs.cds.gode.entity.function.EntityValidation;
 
 @Service
 @Slf4j
@@ -78,5 +81,15 @@ public class CounterManager extends PureEntityManager<Counter, String> implement
         Date now = new Date();
         if (item.getCreatedOn() == null) item.setCreatedOn(now);
         item.setUpdatedOn(now);
+    }
+
+    @Override
+    public <Function extends EntityValidation<Counter>> Optional<Function> validationFunction() {
+        return Optional.empty();
+    }
+
+    @Override
+    public <Function extends EntityFunctionBody<Counter>> Optional<Function> processFunction() {
+        return Optional.empty();
     }
 }

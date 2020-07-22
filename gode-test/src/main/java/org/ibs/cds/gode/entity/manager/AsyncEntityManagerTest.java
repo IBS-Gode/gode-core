@@ -10,12 +10,17 @@ import org.ibs.cds.gode.test.mock.Mock;
 import org.ibs.cds.gode.test.unit.AsyncTest;
 
 import java.io.Serializable;
+import org.ibs.cds.gode.entity.function.EntityFunctionBody;
+import org.ibs.cds.gode.entity.function.EntityValidation;
+import org.springframework.context.ConfigurableApplicationContext;
 
-public abstract class AsyncEntityManagerTest<T extends AsyncEntityManager<V,E,Id>, V extends EntityView<Id>, E extends StateEntity<Id>, Id extends Serializable>
-        extends EntityManagerTest<T,V,E,Id> {
+public abstract class AsyncEntityManagerTest<T extends AsyncEntityManager<V,E,Id>, V extends EntityView<Id>, E extends StateEntity<Id>, Id extends Serializable, Function extends EntityFunctionBody<V> & EntityValidation<E>>
+        extends EntityManagerTest<T,V,E,Id, Function> {
 
     @Override @SneakyThrows
     public T manager() {
+        Function function = function();
+        Mock.when(ConfigurableApplicationContext.class, "getBean", validationFunctionClass()).thenReturn(function);
         QueueRepository queueRepository = AsyncTest.initQueueRepository();
 
         if(storeRepo().isPresent() && cacheRepo().isPresent()){

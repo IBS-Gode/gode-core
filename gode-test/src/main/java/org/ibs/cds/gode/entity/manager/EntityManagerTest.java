@@ -22,9 +22,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.ibs.cds.gode.entity.function.EntityFunctionBody;
+import org.ibs.cds.gode.entity.function.EntityValidation;
+import org.springframework.context.ConfigurableApplicationContext;
 
-public abstract class EntityManagerTest<T extends EntityManager<V,E,Id>, V extends EntityView<Id>, E extends StateEntity<Id>, Id extends Serializable>
-        extends EntityViewManagerTest<T,V,Id> {
+public abstract class EntityManagerTest<T extends EntityManager<V,E,Id>, V extends EntityView<Id>, E extends StateEntity<Id>, Id extends Serializable, Function extends EntityFunctionBody<V> & EntityValidation<E>>
+        extends EntityViewManagerTest<T,V,Id,Function> {
 
     private T entityManager;
 
@@ -138,8 +141,13 @@ public abstract class EntityManagerTest<T extends EntityManager<V,E,Id>, V exten
         return RandomUtils.unique(idClass());
     }
 
+    public abstract Class<Function> validationFunctionClass();
+
     @SneakyThrows
+    @Override
     public T manager(){
+        Function function = function();
+        Mock.when(ConfigurableApplicationContext.class, "getBean", validationFunctionClass()).thenReturn(function);
         if(storeRepo().isPresent() && cacheRepo().isPresent()){
             return managerClass().getDeclaredConstructor(storeRepo().get(), cacheRepo().get())
                     .newInstance(Mock.partial(storeRepo().get()), Mock.partial(cacheRepo().get()));

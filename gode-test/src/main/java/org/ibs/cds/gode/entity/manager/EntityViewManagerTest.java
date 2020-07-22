@@ -8,8 +8,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.Serializable;
+import org.ibs.cds.gode.entity.function.EntityFunctionBody;
+import org.ibs.cds.gode.test.mock.Mock;
+import org.springframework.context.ConfigurableApplicationContext;
 
-public abstract class EntityViewManagerTest<T extends EntityViewManager<V,Id>, V extends EntityView<Id>,Id extends Serializable>
+public abstract class EntityViewManagerTest<T extends EntityViewManager<V,Id>, V extends EntityView<Id>,Id extends Serializable, Function extends EntityFunctionBody<V>>
         extends GodeUnitTest {
 
     private T entityManager;
@@ -37,9 +40,14 @@ public abstract class EntityViewManagerTest<T extends EntityViewManager<V,Id>, V
     public Id id(){
         return RandomUtils.unique(idClass());
     }
+    
+    public abstract Class<Function> processFunctionClass();
+    public abstract Function function();
 
     @SneakyThrows
     public T manager(){
+        Function function = function();
+        Mock.when(ConfigurableApplicationContext.class, "getBean", processFunctionClass()).thenReturn(function);
        return managerClass().getConstructor().newInstance();
     }
 }

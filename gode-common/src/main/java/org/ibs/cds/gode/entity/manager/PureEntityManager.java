@@ -1,27 +1,17 @@
 package org.ibs.cds.gode.entity.manager;
 
 import lombok.extern.slf4j.Slf4j;
-import org.ibs.cds.gode.counter.CounterSpectator;
 import org.ibs.cds.gode.entity.cache.repo.CacheableEntityRepo;
 import org.ibs.cds.gode.entity.manager.operation.PureStateEntityManagerOperation;
-import org.ibs.cds.gode.entity.repo.Repo;
-import org.ibs.cds.gode.entity.store.StoreEntity;
 import org.ibs.cds.gode.entity.store.repo.StoreEntityRepo;
 import org.ibs.cds.gode.entity.type.StateEntity;
-import org.ibs.cds.gode.entity.type.TypicalEntity;
 import org.ibs.cds.gode.entity.validation.ValidationStatus;
-import org.ibs.cds.gode.exception.KnownException;
-import org.ibs.cds.gode.status.BinaryStatus;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 @Slf4j
-public class PureEntityManager<Entity extends StateEntity<Id>,
+public abstract class PureEntityManager<Entity extends StateEntity<Id>,
         Id extends Serializable> extends EntityManager<Entity,Entity, Id>
         implements PureStateEntityManagerOperation< Entity, Id> {
 
