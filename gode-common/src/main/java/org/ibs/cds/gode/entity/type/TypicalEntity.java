@@ -34,6 +34,6 @@ public interface TypicalEntity<Id extends Serializable> extends Serializable{
 
     @JsonIgnore
     default String getClassifier(){
-        return this == null ? null : this.getClass().getSimpleName();
+        return this == null ? null : this.getClass().getName();
     }
 }

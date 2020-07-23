@@ -1,7 +1,5 @@
 package org.ibs.cds.gode.entity.controller;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Predicate;
 import lombok.SneakyThrows;
 import org.ibs.cds.gode.entity.manager.EntityManager;
 import org.ibs.cds.gode.entity.view.EntityView;
@@ -17,7 +15,6 @@ import org.ibs.cds.gode.web.Response;
 import org.ibs.cds.gode.web.context.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
 
 import java.io.Serializable;
 import java.util.List;
@@ -84,28 +81,6 @@ public abstract class EntityStateControllerTest<C extends EntityStateEndPoint<V,
         Assert.assertEquals(pageContext.getPageNumber(), response.getData().getContext().getPageContext().getPageNumber());
         Assert.assertEquals(pageContext.getPageSize(), response.getData().getContext().getPageContext().getPageSize());
         Assert.assertEquals(view.getId(), response.getData().getData().get(0).getId());
-    }
-
-    @Test
-    public void testFindAllByPredicate(){
-        V view = view();
-        Id id = id();
-        view.setId(id);
-        Predicate predicate = new BooleanBuilder().getValue();
-        APIArgument apiArgument = new APIArgument();
-        apiArgument.setPageNumber(1);
-        apiArgument.setPageSize(10);
-        PageContext pageContext = PageContext.fromAPI(apiArgument);
-        ResponsePageContext responsePageContext = new ResponsePageContext(pageContext);
-        PagedData<V> pagedData = new PagedData();
-        pagedData.setData(List.of(view));
-        pagedData.setContext(new QueryContext(responsePageContext, "predicate"));
-        Mock.when(managerClass(), "find").thenReturn(pagedData);
-        Response<PagedData<V>> response =this.controller.findAllByPredicate(predicate, apiArgument);
-        Assert.assertEquals(pageContext.getPageNumber(), response.getData().getContext().getPageContext().getPageNumber());
-        Assert.assertEquals(pageContext.getPageSize(), response.getData().getContext().getPageContext().getPageSize());
-        Assert.assertEquals(view.getId(), response.getData().getData().get(0).getId());
-        Assert.assertEquals("predicate", response.getData().getContext().getPredicate());
     }
 
     public abstract Optional<Class> storeRepo();

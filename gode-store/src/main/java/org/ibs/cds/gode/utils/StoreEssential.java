@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.ibs.cds.gode.entity.store.StoreType;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -18,6 +19,8 @@ public class StoreEssential {
     private JavaArtifact repository;
     private JavaArtifact idAnnotation;
     private StoreType type;
+    private JavaArtifact customRepo;
+    private List<JavaArtifact> customRepoRequirements;
 
     public Set<String> packages(){
         return Set.of(entityAnnotation.fqn(), entityType.fqn(), repo.fqn(), repository.fqn(), idAnnotation.fqn());
@@ -32,6 +35,13 @@ public class StoreEssential {
     }
     public boolean isCassandra(){
         return type == StoreType.CASSANDRA;
+    }
+    public boolean isElasticsearch(){
+        return type == StoreType.ELASTICSEARCH;
+    }
+
+    public boolean hasCustomRepo(){
+        return customRepo != null;
     }
 
 }
