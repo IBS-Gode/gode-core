@@ -5,21 +5,20 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.ibs.cds.gode.entity.generic.Try;
 import org.ibs.cds.gode.exception.KnownException;
 import org.ibs.cds.gode.http.configuration.Result;
+import org.ibs.cds.gode.util.StringUtils;
 
 /**
- *
  * @author manugraj
  */
 public class HttpResult {
@@ -33,7 +32,7 @@ public class HttpResult {
         this.rawResponse = rawResponse;
         this.objectMapper = new ObjectMapper();
         this.resultConfiguration = resultConfiguration;
-        this.rawResponseString = readResponse();
+        this.rawResponseString = readResponse(rawResponse);
     }
 
     public int getStatus() {
@@ -53,7 +52,7 @@ public class HttpResult {
     }
 
     public Map<String, Object> preparedResponse() {
-        if (CollectionUtils.isNotEmpty(resultConfiguration)) {
+        if (CollectionUtils.isNotEmpty(resultConfiguration) && StringUtils.isNotBlank(rawResponseString)) {
             DocumentContext document = JsonPath.parse(rawResponseString);
             return this.resultConfiguration.stream()
                     .map(resultConf -> {
@@ -63,7 +62,6 @@ public class HttpResult {
                         } catch (Exception e) {
                             return null;
                         }
-
                     })
                     .filter(Objects::nonNull)
                     .collect(Collectors.toMap(s -> s.getKey(), s -> s.getValue()));
@@ -71,8 +69,9 @@ public class HttpResult {
         return Collections.emptyMap();
     }
 
-    private String readResponse() {
+    private String readResponse(HttpResponse<JsonNode> rawResponse) {
         try {
+            if (rawResponse == null || rawResponse.getBody() == null) return StringUtils.EMPTY;
             return StringUtils.toEncodedString(rawResponse.getRawBody().readAllBytes(), Charset.defaultCharset());
         } catch (IOException ex) {
             throw KnownException.HTTP_EXCEPTION.provide(ex, "Result data could not retrived");
