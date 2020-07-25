@@ -2,6 +2,8 @@ package org.ibs.cds.gode.utils;
 
 import org.ibs.cds.gode.entity.store.StoreType;
 
+import java.util.List;
+
 public class StoreUtils {
 
     private static final String REPO_PATH = "org.ibs.cds.gode.entity.store.repo";
@@ -22,7 +24,9 @@ public class StoreUtils {
                         new JavaArtifact("MarkJPARepo","org.ibs.cds.gode.entity.store"),
                         new JavaArtifact("JPAEntityRepository",REPO_PATH),
                         new JavaArtifact("Id","javax.persistence"),
-                        type
+                        type,
+                        null,
+                        null
                 );
             case MONGODB:
                 return new StoreEssential(
@@ -32,7 +36,9 @@ public class StoreUtils {
                         new JavaArtifact("MarkMongoRepo","org.ibs.cds.gode.entity.store"),
                         new JavaArtifact("MongoEntityRepository",REPO_PATH),
                         new JavaArtifact("Id","org.springframework.data.annotation"),
-                        type
+                        type,
+                        null,
+                        null
                 );
             case CASSANDRA:
                 return new StoreEssential(
@@ -42,7 +48,21 @@ public class StoreUtils {
                         new JavaArtifact("MarkCassandraRepo","org.ibs.cds.gode.entity.store"),
                         new JavaArtifact("CassandraEntityRepository",REPO_PATH),
                         new JavaArtifact("PrimaryKey","org.springframework.data.cassandra.core.mapping"),
-                        type
+                        type,
+                        null,
+                        null
+                );
+            case ELASTICSEARCH:
+                return new StoreEssential(
+                        new JavaArtifact("Document", "org.springframework.data.elasticsearch.annotations"),
+                        new JavaArtifact("ElasticSearchEntity", ENTITY_PATH),
+                        new JavaArtifact("ElasticSearchRepo", REPO_PATH),
+                        new JavaArtifact("MarkElasticSearchRepo","org.ibs.cds.gode.entity.store"),
+                        new JavaArtifact("ElasticSearchRepository",REPO_PATH),
+                        new JavaArtifact("Id","org.springframework.data.annotation"),
+                        type,
+                        new JavaArtifact("ElasticSearchRepoImpl", REPO_PATH),
+                        List.of(new JavaArtifact("ElasticSearchStoreRequirement", "org.ibs.cds.gode.entity.store.elasticsearch"))
                 );
         }
         return  null;

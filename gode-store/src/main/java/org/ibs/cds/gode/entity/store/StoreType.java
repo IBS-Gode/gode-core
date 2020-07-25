@@ -4,5 +4,6 @@ public enum StoreType implements IStoreType {
     JPA,
     MONGODB,
     CASSANDRA,
-    NEO4J
+    NEO4J,
+    ELASTICSEARCH
 }

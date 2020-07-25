@@ -1,12 +1,10 @@
 package org.ibs.cds.gode.entity.controller;
 
-import com.querydsl.core.types.Predicate;
 import io.swagger.annotations.ApiOperation;
 import org.ibs.cds.gode.entity.manager.EntityManager;
 import org.ibs.cds.gode.entity.operation.Executor;
 import org.ibs.cds.gode.entity.operation.Logic;
 import org.ibs.cds.gode.entity.type.StateEntity;
-import org.ibs.cds.gode.entity.type.TypicalEntity;
 import org.ibs.cds.gode.entity.view.EntityView;
 import org.ibs.cds.gode.exception.KnownException;
 import org.ibs.cds.gode.pagination.PageContext;
@@ -14,7 +12,6 @@ import org.ibs.cds.gode.pagination.PagedData;
 import org.ibs.cds.gode.util.APIArgument;
 import org.ibs.cds.gode.web.Request;
 import org.ibs.cds.gode.web.Response;
-import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +26,6 @@ public class EntityStateEndPoint<View extends EntityView<Id>, Entity extends Sta
     private static final String DEACTIVATE = "/deactivate";
     private static final String FIND = "/find";
     private static final String FIND_ALL = "/findAll";
-    private static final String FIND_ALL_WHERE = "/findAll/where";
     protected Manager manager;
     public EntityStateEndPoint(Manager manager) {
         super(manager);
@@ -58,12 +54,6 @@ public class EntityStateEndPoint<View extends EntityView<Id>, Entity extends Sta
     @ApiOperation("Find all entity instances")
     public Response<PagedData<View>> findAll(@ModelAttribute APIArgument argument) {
         return Executor.run(Logic.findAll0(), PageContext.fromAPI(argument), manager, KnownException.QUERY_FAILED, FIND_ALL);
-    }
-
-    @GetMapping(path= FIND_ALL_WHERE)
-    @ApiOperation("Find all entity instances dynamically")
-    public Response<PagedData<View>> findAllByPredicate(@QuerydslPredicate Predicate predicate, @ModelAttribute APIArgument argument) {
-        return Executor.run(Logic.findAllByPredicate0(), PageContext.fromAPI(argument), predicate, manager, KnownException.QUERY_FAILED, FIND_ALL_WHERE);
     }
 
 }

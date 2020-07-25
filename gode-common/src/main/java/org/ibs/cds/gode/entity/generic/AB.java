@@ -23,4 +23,8 @@ public class AB<A,B> implements Serializable {
     public int hashCode() {
         return EntityUtil.hashCode(this);
     }
+
+    public static boolean isEmpty(AB ab){
+        return ab == null || (ab.a == null && ab.b == null);
+    }
 }
