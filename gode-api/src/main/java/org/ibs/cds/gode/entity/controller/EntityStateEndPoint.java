@@ -1,9 +1,11 @@
 package org.ibs.cds.gode.entity.controller;
 
+import com.querydsl.core.types.Predicate;
 import io.swagger.annotations.ApiOperation;
 import org.ibs.cds.gode.entity.manager.EntityManager;
 import org.ibs.cds.gode.entity.operation.Executor;
 import org.ibs.cds.gode.entity.operation.Logic;
+import org.ibs.cds.gode.entity.query.model.QueryConfig;
 import org.ibs.cds.gode.entity.type.StateEntity;
 import org.ibs.cds.gode.entity.view.EntityView;
 import org.ibs.cds.gode.exception.KnownException;
@@ -27,33 +29,41 @@ public class EntityStateEndPoint<View extends EntityView<Id>, Entity extends Sta
     private static final String FIND = "/find";
     private static final String FIND_ALL = "/findAll";
     protected Manager manager;
+
     public EntityStateEndPoint(Manager manager) {
         super(manager);
         this.manager = manager;
     }
 
-    @PostMapping(path= SAVE)
+    @PostMapping(path = SAVE)
     @ApiOperation("Create/Update entity")
     public Response<View> save(@RequestBody Request<View> request) {
         return Executor.run(Logic.save(), request, manager, KnownException.SAVE_FAILED, SAVE);
     }
 
-    @PostMapping(path= DEACTIVATE)
+    @PostMapping(path = DEACTIVATE)
     @ApiOperation("Deactivate entity")
     public Response<Boolean> deactivate(@RequestBody Request<Id> request) {
         return Executor.run(Logic.deactivate(), request, manager, KnownException.SAVE_FAILED, DEACTIVATE);
     }
 
-    @GetMapping(path= FIND)
+    @GetMapping(path = FIND)
     @ApiOperation("Find entity by id")
     public Response<View> find(Id request) {
         return Executor.run(Logic.findById(), request, manager, KnownException.QUERY_FAILED, FIND);
     }
 
-    @GetMapping(path= FIND_ALL)
+    @GetMapping(path = FIND_ALL)
     @ApiOperation("Find all entity instances")
     public Response<PagedData<View>> findAll(@ModelAttribute APIArgument argument) {
         return Executor.run(Logic.findAll0(), PageContext.fromAPI(argument), manager, KnownException.QUERY_FAILED, FIND_ALL);
     }
 
+    public Response<PagedData<View>> findAllByPredicate(Predicate predicate, @ModelAttribute APIArgument argument, String url) {
+        return Executor.run(Logic.findAllByPredicate0(), PageContext.fromAPI(argument), predicate, manager, KnownException.QUERY_FAILED, url);
+    }
+
+    public Response<PagedData<View>> findAllByPredicate(QueryConfig<Entity> predicate, String url) {
+        return Executor.run(Logic.findAllByPredicate(), predicate, manager, KnownException.QUERY_FAILED, url);
+    }
 }

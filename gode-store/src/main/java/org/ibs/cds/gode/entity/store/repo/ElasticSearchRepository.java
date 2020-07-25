@@ -2,6 +2,7 @@ package org.ibs.cds.gode.entity.store.repo;
 
 import com.querydsl.core.types.Predicate;
 import org.apache.commons.collections4.CollectionUtils;
+import org.ibs.cds.gode.entity.query.model.QueryConfig;
 import org.ibs.cds.gode.entity.type.ElasticSearchEntity;
 import org.ibs.cds.gode.exception.KnownException;
 import org.ibs.cds.gode.pagination.PageContext;
@@ -12,7 +13,6 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ElasticSearchRepository<Entity extends ElasticSearchEntity<Id>, Id extends Serializable, Repo extends ElasticSearchRepo<Entity,Id>> implements StoreEntityRepo<Entity,Id> {
@@ -83,5 +83,8 @@ public class ElasticSearchRepository<Entity extends ElasticSearchEntity<Id>, Id 
         return repo.findAllById(ids);
     }
 
-
+    @Override
+    public PagedData<Entity> findAll(QueryConfig<Entity> queryConfig) {
+        return repo.findAll(queryConfig);
+    }
 }

@@ -5,7 +5,9 @@ import org.ibs.cds.gode.entity.generic.DataMap;
 import org.ibs.cds.gode.entity.manager.EntityManager;
 import org.ibs.cds.gode.entity.manager.EntityViewManager;
 import org.ibs.cds.gode.entity.manager.PureEntityManager;
+import org.ibs.cds.gode.entity.query.model.QueryConfig;
 import org.ibs.cds.gode.entity.store.StoreEntity;
+import org.ibs.cds.gode.entity.type.StateEntity;
 import org.ibs.cds.gode.entity.validation.ValidationStatus;
 import org.ibs.cds.gode.entity.view.EntityView;
 import org.ibs.cds.gode.pagination.PageContext;
@@ -36,8 +38,8 @@ public class Logic {
         return pc -> manager -> manager.find(pc);
     }
 
-    public static <View extends EntityView<?>,Manager extends EntityManager<View, ?, ?>>  Function<PageContext,Function<Predicate, Function<Manager,PagedData<View>>>> findAllByPredicate(){
-        return pc -> predicate -> manager -> manager.find(predicate, pc);
+    public static <View extends EntityView<?>,Entity extends StateEntity<?>,Manager extends EntityManager<View, Entity, ?>>  Function<QueryConfig<Entity>, Function<Manager,PagedData<View>>> findAllByPredicate(){
+        return predicate -> manager -> manager.find(predicate);
     }
 
     public static <View extends EntityView<?>,Manager extends EntityViewManager<View, ?>>  Function<View, Function<Manager, DataMap>> process(){

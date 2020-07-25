@@ -1,14 +1,11 @@
 package org.ibs.cds.gode.pagination;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.extern.slf4j.Slf4j;
 import org.ibs.cds.gode.util.APIArgument;
-import org.ibs.cds.gode.util.EntityUtil;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Slf4j
 public class PageContext {
 
 	private int pageNumber;
@@ -68,11 +65,6 @@ public class PageContext {
 
 	public int getPageSize() {
 		return pageSize;
-	}
-
-	@Override
-	public String toString() {
-		return EntityUtil.toString(this);
 	}
 
 	public PageContext next(){

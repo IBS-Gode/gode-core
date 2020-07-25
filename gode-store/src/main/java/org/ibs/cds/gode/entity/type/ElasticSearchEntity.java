@@ -11,11 +11,8 @@ import java.util.Date;
 import java.util.Objects;
 
 public abstract class ElasticSearchEntity<Id extends Serializable> extends StoreEntity<Id> {
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date createdOn;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date updatedOn;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long appId;
     private boolean active;
 

@@ -7,5 +7,6 @@ import org.springframework.data.repository.NoRepositoryBean;
 import java.io.Serializable;
 
 @NoRepositoryBean
-public interface ElasticSearchRepo<Entity extends ElasticSearchEntity<Id>, Id extends Serializable> extends ElasticSearchTechnicalRepo<Entity, Id> {
+public interface ElasticSearchRepo<Entity extends ElasticSearchEntity<Id>, Id extends Serializable> extends ElasticSearchTechnicalRepo<Entity, Id>,DynamicQueryRepo<Entity>{
+
 }

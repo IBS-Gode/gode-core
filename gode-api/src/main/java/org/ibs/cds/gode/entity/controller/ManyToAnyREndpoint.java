@@ -13,7 +13,6 @@ import org.ibs.cds.gode.pagination.PagedData;
 import org.ibs.cds.gode.util.APIArgument;
 import org.ibs.cds.gode.web.Request;
 import org.ibs.cds.gode.web.Response;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

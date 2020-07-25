@@ -81,5 +81,10 @@
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.ibs.cds.gode</groupId>
+            <artifactId>gode-query</artifactId>
+            <version>${gode.version}</version>
+        </dependency>
     </dependencies>
 </project>

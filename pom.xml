@@ -21,6 +21,7 @@
 		<module>gode-auth</module>
 		<module>gode-deployer</module>
 		<module>gode-http</module>
+		<module>gode-query</module>
 	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -211,6 +212,11 @@
 				<groupId>org.elasticsearch.plugin</groupId>
 				<artifactId>mapper-extras</artifactId>
 				<version>6.1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.ibs.cds.gode</groupId>
+				<artifactId>gode-common</artifactId>
+				<version>${gode.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

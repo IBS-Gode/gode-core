@@ -5,6 +5,7 @@ import com.google.common.reflect.TypeToken;
 import lombok.SneakyThrows;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -23,13 +24,15 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.ibs.cds.gode.entity.generic.Try;
+import org.ibs.cds.gode.entity.query.QueryStore;
+import org.ibs.cds.gode.entity.query.model.QueryConfig;
+import org.ibs.cds.gode.entity.query.parse.QueryParser;
 import org.ibs.cds.gode.entity.store.elasticsearch.ElasticSearchStoreRequirement;
 import org.ibs.cds.gode.entity.type.ElasticSearchEntity;
 import org.ibs.cds.gode.exception.KnownException;
 import org.ibs.cds.gode.pagination.*;
 import org.ibs.cds.gode.util.PageUtils;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.data.domain.Page;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -49,6 +52,7 @@ public class ElasticSearchRepoImpl<Entity extends ElasticSearchEntity<Id>,Id ext
     private static final String WILD_CARD_QUERY_TMPL="*%s*";
     private final String indexName;
     private final Class<Entity> entityClass;
+    private final QueryParser<SearchRequest> queryPaser;
 
     public ElasticSearchRepoImpl(ElasticSearchStoreRequirement elasticSearchStoreRequirement) {
         this.client = elasticSearchStoreRequirement.getClient();
@@ -57,6 +61,7 @@ public class ElasticSearchRepoImpl<Entity extends ElasticSearchEntity<Id>,Id ext
         TypeToken<Entity> typeToken = new TypeToken<Entity>(getClass()) { };
         this.entityClass = (Class<Entity>) typeToken.getRawType();
         this.indexName = resolveIndexName();
+        this.queryPaser = elasticSearchStoreRequirement.getQueryParser();
 
     }
 
@@ -194,26 +199,46 @@ public class ElasticSearchRepoImpl<Entity extends ElasticSearchEntity<Id>,Id ext
         return objectMapper.convertValue(map, getEntityType());
     }
 
+    @SneakyThrows
+    private Entity toEntity(String json){
+        return objectMapper.readValue(json, getEntityType());
+    }
+
     public PagedData<Entity> findAll(QueryBuilder query, String indexName, PageContext pageContext) throws IOException {
-        List<Entity> result = new ArrayList<>();
-        PagedData<Entity> pagedData = new PagedData<>();
         SearchRequest searchRequest = searchRequest(query, pageContext);
         SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+        return getPage(query.toString(), pageContext, searchResponse);
+    }
+
+    @NotNull
+    private PagedData<Entity> getPage(String query, PageContext pageContext, SearchResponse searchResponse) {
+        List<Entity> result = new ArrayList<>();
+        PagedData<Entity> pagedData = new PagedData<>();
         SearchHits hits = searchResponse.getHits();
         SearchHit[] searchHits = hits.getHits();
         for (SearchHit hit : searchHits) {
-            Entity entity = toEntity(hit.getSourceAsMap());
+            Entity entity = toEntity(hit.getSourceAsString());
             result.add(entity);
         }
         pagedData.setData(result);
         ResponsePageContext responsePageContext = new ResponsePageContext(pageContext);
         responsePageContext.setTotalCount(searchResponse.getHits().getTotalHits());
-        pagedData.setContext(new QueryContext(responsePageContext, query == null ? null : query.toString()));
+        pagedData.setContext(new QueryContext(responsePageContext, query));
         return pagedData;
     }
 
     private void flush(String indexName) throws IOException {
         String endPoint = String.join("/", indexName, "_flush");
         client.getLowLevelClient().performRequest(new Request("POST", endPoint));
+    }
+
+    @Override
+    public PagedData<Entity> findAll(QueryConfig<Entity> queryConfig) {
+        Pair<SearchRequest, PageContext> parsedValue = queryPaser.parse(queryConfig);
+        try {
+            return getPage(null, parsedValue.getRight(), client.search(parsedValue.getLeft(), RequestOptions.DEFAULT));
+        } catch (IOException e) {
+            throw KnownException.QUERY_FAILED.provide(e);
+        }
     }
 }

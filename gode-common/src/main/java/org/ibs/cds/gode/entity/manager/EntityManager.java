@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ibs.cds.gode.counter.CounterSpectator;
 import org.ibs.cds.gode.entity.cache.repo.CacheableEntityRepo;
 import org.ibs.cds.gode.entity.manager.operation.StateEntityManagerOperation;
+import org.ibs.cds.gode.entity.query.model.QueryConfig;
 import org.ibs.cds.gode.entity.repo.Repo;
 import org.ibs.cds.gode.entity.repo.RepoType;
 import org.ibs.cds.gode.entity.store.repo.StoreEntityRepo;
@@ -186,6 +187,15 @@ public abstract class EntityManager<View extends EntityView<Id>, Entity extends 
         Repo<Entity, Id> entityIdRepo = repository.get(RepoType.STORE);
         if (entityIdRepo != null) {
             return transformEntityPage(((StoreEntityRepo<Entity, Id>) entityIdRepo).findAll(predicate, pageContext));
+        }
+        return PageUtils.emptyPage();
+    }
+
+    public PagedData<View> find(QueryConfig<Entity> queryConfig) {
+        log.debug(LOG_TEMPLATE2, FIND_BY_PREDICATE, "predicate", "dynamic");
+        Repo<Entity, Id> entityIdRepo = repository.get(RepoType.STORE);
+        if (entityIdRepo != null) {
+            return transformEntityPage(entityIdRepo.findAll(queryConfig));
         }
         return PageUtils.emptyPage();
     }

@@ -1,8 +1,6 @@
 package org.ibs.cds.gode.pagination;
 
 
-import org.ibs.cds.gode.util.EntityUtil;
-
 public class Sortable {
 
     private Type sortType;
@@ -34,11 +32,6 @@ public class Sortable {
 
     public void setField(String field) {
         this.field = field;
-    }
-
-    @Override
-    public String toString() {
-        return EntityUtil.toString(this);
     }
 
     public enum Type {

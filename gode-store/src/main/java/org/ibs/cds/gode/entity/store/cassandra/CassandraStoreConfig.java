@@ -187,7 +187,7 @@ public class CassandraStoreConfig extends AbstractClusterConfiguration implement
 
     private CreateKeyspaceSpecification getKeySpaceSpecification() {
         CreateKeyspaceSpecification createKeySpaceSpec = CreateKeyspaceSpecification.createKeyspace(keySpace);
-        createKeySpaceSpec.ifNotExists(true).withNetworkReplication(DataCenterReplication.of("dc1", 3L));
+        createKeySpaceSpec.ifNotExists(true).withNetworkReplication(DataCenterReplication.of("dc1", 1L));
         return createKeySpaceSpec;
     }
 }
