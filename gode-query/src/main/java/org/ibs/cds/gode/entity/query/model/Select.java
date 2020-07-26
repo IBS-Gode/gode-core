@@ -6,7 +6,9 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @JsonPropertyOrder({
@@ -23,5 +25,12 @@ public class Select implements Serializable
 
     public Select() {
         this.only = new ArrayList();
+    }
+
+    private final static String TEMP = "SELECT %s WHERE %s";
+
+    public String toString(){
+        String fields = only.stream().collect(Collectors.joining(","));
+        return String.format(TEMP, fields, where.toString());
     }
 }

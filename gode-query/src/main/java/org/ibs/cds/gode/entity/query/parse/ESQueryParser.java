@@ -8,7 +8,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.ibs.cds.gode.entity.query.QueryStore;
+import org.ibs.cds.gode.entity.query.QueryType;
 import org.ibs.cds.gode.entity.query.model.*;
 import org.ibs.cds.gode.entity.query.operation.QueryOperationTranslator;
 import org.ibs.cds.gode.pagination.PageContext;
@@ -16,15 +16,16 @@ import org.ibs.cds.gode.pagination.Sortable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class ESQueryParser implements QueryParser<SearchRequest> {
+public class ESQueryParser<E> implements QueryParser<E,SearchRequest> {
 
-    public Pair<SearchRequest,PageContext> parse(QueryConfig queryConfig) {
+    public Pair<SearchRequest,PageContext> parse(QueryConfig<E> queryConfig, Map<String,Class> fieldMetadata) {
         Select query = queryConfig.getSelect();
         String indexName = queryConfig.getName();
         List<QueryBuilder> builders = new ArrayList();
         Pair<String, SortOrder> orderByClause = parseOrderByClause(query.getOrder());
-        parseWhereClause(query.getWhere(), builders);
+        parseWhereClause(query.getWhere(), builders, fieldMetadata);
         Pair<SearchSourceBuilder, PageContext> sourceBuilder = searchBuilder(builders, queryConfig, orderByClause);
         return Pair.of(new SearchRequest(indexName).source(sourceBuilder.getKey()),sourceBuilder.getValue());
     }
@@ -62,7 +63,7 @@ public class ESQueryParser implements QueryParser<SearchRequest> {
         return Pair.of(by == null ? "createdOn" : by, fromSortType(order.getIn()));
     }
 
-    private void parseWhereClause(Where where, List<QueryBuilder> builders) {
+    private void parseWhereClause(Where where, List<QueryBuilder> builders, Map<String, Class> fieldMetadata) {
         if(where == null) {
             builders.add(QueryBuilders.matchAllQuery());
             return;
@@ -70,14 +71,14 @@ public class ESQueryParser implements QueryParser<SearchRequest> {
         String field = where.getField();
         QueryOperation operation = where.getOperation();
         List<Operand> operands = where.getOperands();
-        builders.add((QueryBuilder) QueryOperationTranslator.translate(getType(), field, operation, operands.toArray(Operand[]::new)));
-        parseCompose(where.getAnd(), builders);
-        parseCompose(where.getOr(), builders);
+        builders.add((QueryBuilder) QueryOperationTranslator.translate(fieldMetadata, getType(), field, operation, operands.toArray(Operand[]::new)));
+        parseCompose(where.getAnd(), builders, fieldMetadata);
+        parseCompose(where.getOr(), builders, fieldMetadata);
     }
 
-    private void parseCompose(Compose composed, List<QueryBuilder> builders){
+    private void parseCompose(Compose composed, List<QueryBuilder> builders, Map<String, Class> fieldMetadata){
         if (composed != null && CollectionUtils.isNotEmpty(composed.getWhere())) {
-            composed.getWhere().stream().forEach(w -> parseWhereClause(w, builders));
+            composed.getWhere().stream().forEach(w -> parseWhereClause(w, builders, fieldMetadata));
         }
     }
 
@@ -92,7 +93,7 @@ public class ESQueryParser implements QueryParser<SearchRequest> {
     }
 
     @Override
-    public QueryStore getType() {
-        return QueryStore.ELASTICSEARCH;
+    public QueryType getType() {
+        return QueryType.ELASTICSEARCH;
     }
 }

@@ -6,7 +6,10 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Data
 @JsonPropertyOrder({
         "field",
@@ -29,4 +32,12 @@ public class Where implements Serializable
         this.operands = new ArrayList();
     }
 
+    public String toString(){
+        String args = operands.stream().map(Operand::getValue).collect(Collectors.joining(","));
+        String whereString = field.concat(" ").concat(operation.toString()).concat(" ").concat(args);
+        if(and != null || or != null){
+            return whereString.concat("...");
+        }
+        return whereString;
+    }
 }

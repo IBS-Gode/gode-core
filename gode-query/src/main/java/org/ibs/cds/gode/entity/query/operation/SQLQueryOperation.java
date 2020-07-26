@@ -1,11 +1,15 @@
 package org.ibs.cds.gode.entity.query.operation;
 
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
-import org.ibs.cds.gode.entity.query.QueryStore;
+import org.ibs.cds.gode.entity.query.QueryType;
 import org.ibs.cds.gode.entity.query.exception.GodeQueryException;
 import org.ibs.cds.gode.entity.query.model.Operand;
 import org.ibs.cds.gode.entity.query.model.QueryOperation;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  *
@@ -13,41 +17,50 @@ import org.ibs.cds.gode.entity.query.model.QueryOperation;
  */
 public enum SQLQueryOperation implements StoreQueryOperation<String> {
 
-//    stringEquals(1, "$column = \'%s\'", QueryOperation.eq, String.class),
-//    stringNotEquals(1, "$column =  \'%s\'", QueryOperation.eq, String.class),
-//    like(1, "$column like %s", QueryOperation.eq, Number.class),
-//    equals(1,"$column = %s", QueryOperation.eq, Number.class),
-//    notEquals(1, "$column != %s", QueryOperation.eq, Number.class),
-//    gt(1, "$column > %s", QueryOperation.eq, Number.class),
-//    lt(1, "$column < %s", QueryOperation.eq, Number.class),
-//    gte(1, "$column >= %s", QueryOperation.eq, Number.class),
-//    lte(1, "$column <= %s", QueryOperation.eq, Number.class),
-//    btw(2, "$column <= %s AND $column >= %s", QueryOperation.eq, Number.class)
-    
+    stringEquals(1, (col, operands)->stringFormatter(col, "=", operands[0]), QueryOperation.eq, String.class),
+    stringNotEquals(1, (col, operands)->stringFormatter(col, "!=", operands[0]), QueryOperation.neq, String.class),
+    like(1, (col, operands)->stringFormatter(col, "like", operands[0]), QueryOperation.like, String.class),
+    equals(1,(col, operands)->formatter(col, "=", operands[0]), QueryOperation.eq, Long.class, Double.class, BigInteger.class, BigDecimal.class),
+    notEquals(1, (col, operands)->formatter(col, "!=", operands[0]), QueryOperation.neq, Long.class, Double.class, BigInteger.class, BigDecimal.class),
+    gt(1, (col, operands)->formatter(col, ">", operands[0]), QueryOperation.gt, Long.class, Double.class, BigInteger.class, BigDecimal.class),
+    lt(1, (col, operands)->formatter(col, "<", operands[0]), QueryOperation.lt, Long.class, Double.class, BigInteger.class, BigDecimal.class),
+    gte(1, (col, operands)->formatter(col, ">=", operands[0]), QueryOperation.gte, Long.class, Double.class, BigInteger.class, BigDecimal.class),
+    lte(1, (col, operands)->formatter(col, "<=", operands[0]), QueryOperation.lte, Long.class, Double.class, BigInteger.class, BigDecimal.class),
+    btw(2, (col, operands)->formatter(col, ">=", operands[0]).concat(" AND ").concat(formatter(col, "<=", operands[1])), QueryOperation.between, Long.class, Double.class, BigInteger.class, BigDecimal.class)
     ;
     
     private int argCount;
-    private final String format;
+    private final BiFunction<String, Operand[], String> format;
     private final @Getter QueryOperation operation;
-    private final Class type;
+    @Getter
+    private final List<Class> type;
 
-    SQLQueryOperation(int argCount, String format, QueryOperation operation, Class type) {
+    SQLQueryOperation(int argCount, BiFunction<String, Operand[], String> format, QueryOperation operation, Class... type) {
         this.argCount = argCount;
         this.format = format;
         this.operation = operation;
-        this.type = type;
+        this.type = List.of(type);
     }
 
     @Override
     public String getOperation(String column, Operand... args) {
-        if(args == null || args.length < this.argCount) throw new GodeQueryException("Not enough arguments are available for the query");
-        return String.format(StringUtils.replace(this.format, "$column",  column), args);
+        if(args == null || args.length < this.argCount) throw new GodeQueryException("Not enough arguments are available for the operation:"+operation);
+        return this.format.apply(column, args);
     }
 
     @Override
-    public QueryStore store() {
-        return QueryStore.JPA;
+    public QueryType store() {
+        return QueryType.MYSQL;
     }
 
-   
+    private static String stringFormatter(String column, String operator, Operand operand){
+        if(operand.isAttribute()){
+            return formatter(column, operator, operand);
+        }
+        return column.concat(" ").concat(operator).concat(" '").concat(operand.getValue()).concat("'");
+    }
+
+    private static String formatter(String column, String operator, Operand operand){
+        return column.concat(" ").concat(operator).concat(" ").concat(operand.getValue());
+    }
 }

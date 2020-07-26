@@ -24,7 +24,6 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.ibs.cds.gode.entity.generic.Try;
-import org.ibs.cds.gode.entity.query.QueryStore;
 import org.ibs.cds.gode.entity.query.model.QueryConfig;
 import org.ibs.cds.gode.entity.query.parse.QueryParser;
 import org.ibs.cds.gode.entity.store.elasticsearch.ElasticSearchStoreRequirement;
@@ -52,7 +51,7 @@ public class ElasticSearchRepoImpl<Entity extends ElasticSearchEntity<Id>,Id ext
     private static final String WILD_CARD_QUERY_TMPL="*%s*";
     private final String indexName;
     private final Class<Entity> entityClass;
-    private final QueryParser<SearchRequest> queryPaser;
+    private final QueryParser<Entity,SearchRequest> queryPaser;
 
     public ElasticSearchRepoImpl(ElasticSearchStoreRequirement elasticSearchStoreRequirement) {
         this.client = elasticSearchStoreRequirement.getClient();
@@ -234,7 +233,7 @@ public class ElasticSearchRepoImpl<Entity extends ElasticSearchEntity<Id>,Id ext
 
     @Override
     public PagedData<Entity> findAll(QueryConfig<Entity> queryConfig) {
-        Pair<SearchRequest, PageContext> parsedValue = queryPaser.parse(queryConfig);
+        Pair<SearchRequest, PageContext> parsedValue = queryPaser.doParse(queryConfig);
         try {
             return getPage(null, parsedValue.getRight(), client.search(parsedValue.getLeft(), RequestOptions.DEFAULT));
         } catch (IOException e) {

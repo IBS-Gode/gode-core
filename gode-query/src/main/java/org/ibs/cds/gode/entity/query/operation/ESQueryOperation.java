@@ -2,7 +2,7 @@ package org.ibs.cds.gode.entity.query.operation;
 
 import lombok.Getter;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.ibs.cds.gode.entity.query.QueryStore;
+import org.ibs.cds.gode.entity.query.QueryType;
 import org.ibs.cds.gode.entity.query.exception.GodeQueryException;
 import org.ibs.cds.gode.entity.query.model.Operand;
 import org.ibs.cds.gode.entity.query.model.QueryOperation;
@@ -30,8 +30,8 @@ public enum ESQueryOperation implements StoreQueryOperation<QueryBuilder> {
 
     private int argCount;
     private final BiFunction<String, Operand[], QueryBuilder> builder;
-    private final @Getter
-    QueryOperation operation;
+    @Getter
+    private final QueryOperation operation;
     private final Class type;
 
     ESQueryOperation(int argCount, BiFunction<String, Operand[], QueryBuilder> builder, QueryOperation operation, Class type) {
@@ -50,8 +50,8 @@ public enum ESQueryOperation implements StoreQueryOperation<QueryBuilder> {
     }
 
     @Override
-    public QueryStore store() {
-        return QueryStore.ELASTICSEARCH;
+    public QueryType store() {
+        return QueryType.ELASTICSEARCH;
     }
 
 }

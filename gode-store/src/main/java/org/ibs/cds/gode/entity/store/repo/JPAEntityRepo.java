@@ -10,5 +10,4 @@ import java.io.Serializable;
 @NoRepositoryBean
 public interface JPAEntityRepo<Entity extends JPAEntity<Id>, Id extends Serializable> extends JPASpringRepo<Entity, Id>, QuerydslPredicateExecutor<Entity>{
 
-
 }

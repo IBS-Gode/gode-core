@@ -15,7 +15,11 @@ public class Operand {
     private String value;
     private boolean attribute;
 
-    public static Operand of(String value){
+    public static Operand literal(String value){
         return new Operand(value, false);
+    }
+
+    public static Operand field(String name){
+        return new Operand(name, true);
     }
 }
