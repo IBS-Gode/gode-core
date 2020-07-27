@@ -46,7 +46,7 @@ public class QueryOperationTranslator {
         return esOperations.get(op).getOperation(column, args);
     }
 
-    public static String mysql(Map<String, Class> fieldMetadata, String column, QueryOperation op, Operand... args) {
+    public static String rawSql(Map<String, Class> fieldMetadata, String column, QueryOperation op, Operand... args) {
         Class classType = fieldMetadata.get(column);
         if (!sqlOperations.contains(op, classType))
             throw new GodeQueryException("No store operations avaiable for the operation:" + op);
@@ -66,8 +66,8 @@ public class QueryOperationTranslator {
                 return es(column, op, args);
             case JPA:
                 return jpa(column, op, args);
-            case MYSQL:
-                return mysql(fieldMetadata, column, op, args);
+            case RAW_SQL:
+                return rawSql(fieldMetadata, column, op, args);
             default:
                 throw new GodeQueryException("No store mapping found for dynamic query");
         }
