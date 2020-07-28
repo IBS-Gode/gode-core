@@ -19,6 +19,7 @@ public class QueryConfig<T> implements Serializable
     public int pageNo;
     public int pageSize;
     private final static long serialVersionUID = -2199236369070389938L;
+    @JsonIgnore
     private final Class<T> type;
     private static final String TEMP = "Query[ model: %s, condition: %s]";
 

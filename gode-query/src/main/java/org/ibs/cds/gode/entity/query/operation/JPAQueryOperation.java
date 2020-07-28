@@ -6,8 +6,10 @@ import org.ibs.cds.gode.entity.query.model.Operand;
 import org.ibs.cds.gode.entity.query.model.QueryOperation;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.Arrays;
 import java.util.function.Function;
 
 public enum JPAQueryOperation implements StoreQueryOperation<Function<Root<?>, Function<CriteriaBuilder, Predicate>>> {
@@ -84,7 +86,16 @@ public enum JPAQueryOperation implements StoreQueryOperation<Function<Root<?>, F
                 }
                 return root -> criteria -> criteria.between(root.get(col), operand1.getValue(), operand2.getValue());
             }
-            , QueryOperation.between);
+            , QueryOperation.between),
+    in(-1,
+            (col, operands) -> {
+                Operand operand1 = operands[0];
+                if (operand1.isAttribute()) {
+                    return root -> criteria -> criteria.in(root.get(col)).in(Arrays.stream(operands).map(k->root.get(k.getValue())).toArray(Path[]::new));
+                }
+                return root -> criteria -> criteria.in(root.get(col)).in(Arrays.stream(operands).map(Operand::getValue).toArray());
+            }
+            , QueryOperation.in);
 
     private CriteriaBuilder config;
     private int argCount;
