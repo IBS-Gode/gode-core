@@ -24,6 +24,7 @@ public class LocalGit {
     private final Git git;
     private final String repoName;
     private RemoteGitUrl remoteGit;
+    private NGit nativeGit;
 
     private LocalGit(String repoName, File path, RemoteGitUrl remoteGit) throws IOException {
         this.path = path;
@@ -31,6 +32,7 @@ public class LocalGit {
         this.localRepo = initLocalRepo(path);
         this.git = new Git(localRepo);
         this.repoName = repoName;
+        this.nativeGit = new NGit(path.toPath());
     }
 
     public static LocalGit at(String repoName, File path, RemoteGitUrl remoteRepo) {
@@ -183,5 +185,13 @@ public class LocalGit {
         } catch (GitAPIException ex) {
             throw KnownException.SYSTEM_FAILURE.provide(ex);
         }
+    }
+
+    public boolean run(String... commands){
+        return nativeGit.cmd(commands) == 0;
+    }
+
+    public NGit gitNative(){
+        return this.nativeGit;
     }
 }

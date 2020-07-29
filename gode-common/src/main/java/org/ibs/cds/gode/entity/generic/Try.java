@@ -26,12 +26,12 @@ public class Try<E extends Exception, T, R> {
         });
     }
 
-    public Try catchWith(Consumer<Exception> catchBlock) {
+    public Try<E, T, R> catchWith(Consumer<Exception> catchBlock) {
         this.catchBlock = catchBlock;
         return this;
     }
 
-    public Try catchWith(KnownException knownException) {
+    public Try<E, T, R> catchWith(KnownException knownException) {
         this.catchBlock = s -> knownException.provide(s);
         return this;
     }
@@ -44,7 +44,6 @@ public class Try<E extends Exception, T, R> {
                 this.catchBlock.accept(e);
             }
             return Optional.empty();
-
         }
     }
 }
