@@ -51,7 +51,7 @@ public class JPAQuery<T> implements Specification<T> {
         else if (or == null)
             return criteriaBuilder.or(query, and);
         else
-            return criteriaBuilder.or(criteriaBuilder.and(query, and));
+            return criteriaBuilder.or(criteriaBuilder.and(query, and), or);
     }
 
     private Function<Root<?>, Function<CriteriaBuilder, Predicate>> translate(Where where, Map<String, Class> fieldMetadata) {

@@ -43,20 +43,20 @@ public class QueryOperationTranslator {
     public static QueryBuilder es(String column, QueryOperation op, Operand... args) {
         if (!esOperations.containsKey(op))
             throw new GodeQueryException("No store operations avaiable for the operation:" + op);
-        return esOperations.get(op).getOperation(column, args);
+        return esOperations.get(op).operation(column, args);
     }
 
     public static String rawSql(Map<String, Class> fieldMetadata, String column, QueryOperation op, Operand... args) {
         Class classType = fieldMetadata.get(column);
         if (!sqlOperations.contains(op, classType))
             throw new GodeQueryException("No store operations avaiable for the operation:" + op);
-        return sqlOperations.get(op, classType).getOperation(column, args);
+        return sqlOperations.get(op, classType).operation(column, args);
     }
 
     public static Function<Root<?>, Function<CriteriaBuilder, Predicate>> jpa(String column, QueryOperation op, Operand... args) {
         if (!jpaOperations.containsKey(op))
             throw new GodeQueryException("No store operations avaiable for the operation:" + op);
-        return jpaOperations.get(op).getOperation(column, args);
+        return jpaOperations.get(op).operation(column, args);
     }
 
     public static Object translate(Map<String, Class> fieldMetadata, QueryType type, String column, QueryOperation op, Operand... args) {

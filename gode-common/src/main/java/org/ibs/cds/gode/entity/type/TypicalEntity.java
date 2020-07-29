@@ -1,10 +1,12 @@
 package org.ibs.cds.gode.entity.type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.io.Serializable;
 import java.util.Date;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public interface TypicalEntity<Id extends Serializable> extends Serializable{
 
     @JsonIgnore

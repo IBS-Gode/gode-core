@@ -28,7 +28,8 @@ public enum SQLQueryOperation implements StoreQueryOperation<String> {
     lte(1, (col, operands)->formatter(col, "<=", operands[0]), QueryOperation.lte, Long.class, Double.class, BigInteger.class, BigDecimal.class),
     btw(2, (col, operands)->formatter(col, ">=", operands[0]).concat(" AND ").concat(formatter(col, "<=", operands[1])), QueryOperation.between, Long.class, Double.class, BigInteger.class, BigDecimal.class)
     ;
-    
+
+    @Getter
     private int argCount;
     private final BiFunction<String, Operand[], String> format;
     private final @Getter QueryOperation operation;
@@ -44,7 +45,6 @@ public enum SQLQueryOperation implements StoreQueryOperation<String> {
 
     @Override
     public String getOperation(String column, Operand... args) {
-        if(args == null || args.length < this.argCount) throw new GodeQueryException("Not enough arguments are available for the operation:"+operation);
         return this.format.apply(column, args);
     }
 

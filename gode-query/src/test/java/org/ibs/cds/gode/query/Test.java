@@ -9,7 +9,7 @@ import org.ibs.cds.gode.entity.query.dsl.WhereClause;
 import org.ibs.cds.gode.entity.query.model.Operand;
 import org.ibs.cds.gode.entity.query.model.QueryConfig;
 import org.ibs.cds.gode.entity.query.model.QueryOperation;
-import org.ibs.cds.gode.entity.query.parse.MongoQueryParser;
+import org.ibs.cds.gode.entity.query.parse.RawMongoQueryParser;
 import org.ibs.cds.gode.entity.query.parse.RawSQLQueryParser;
 import org.ibs.cds.gode.pagination.PageContext;
 
@@ -22,18 +22,20 @@ public class Test {
         QueryConfig query = Query
                             .select("name", "mark")
                             .where("name", QueryOperation.eq, Operand.literal("1"))
-                            .and(WhereClause.of("id", QueryOperation.eq, Operand.literal("1")), WhereClause.of("std", QueryOperation.eq, Operand.literal("5")))
+                            .and(WhereClause.of("id", QueryOperation.eq, Operand.literal("1"))
+                                    , WhereClause.of("std", QueryOperation.eq, Operand.field("name")))
                             .orderBy("id")
                             .desc()
                             .query(Entity.class);
 
         RawSQLQueryParser<Entity> parser = new RawSQLQueryParser();
-        MongoQueryParser<Entity> mParser = new MongoQueryParser();
+        RawMongoQueryParser<Entity> mParser = new RawMongoQueryParser();
 
         Pair<String, PageContext> parsed = parser.doParse(query);
+        Pair<MongoDBQueryHolder, Entity> mongoParsed = mParser.doParse(query);
         System.out.println(query);
         System.out.println(parsed.getKey());
-        System.out.println(mParser.doParse(query).getKey().toString());
+        System.out.println(mongoParsed.getKey().getQuery().toJson());
     }
 
     public static void test(String... fields) {

@@ -38,7 +38,7 @@ public enum JPAQueryOperation implements StoreQueryOperation<Function<Root<?>, F
                 if (operand.isAttribute()) {
                     return root -> criteria -> criteria.like(root.get(col), root.get(operand.getValue()));
                 }
-                return root -> criteria -> criteria.like(root.get(col), operand.getValue());
+                return root -> criteria -> criteria.like(root.get(col), "%"+operand.getValue()+"%");
             }
             , QueryOperation.like),
     gt(1,
@@ -98,6 +98,7 @@ public enum JPAQueryOperation implements StoreQueryOperation<Function<Root<?>, F
             , QueryOperation.in);
 
     private CriteriaBuilder config;
+    @Getter
     private int argCount;
     private final JPAQueryResolver builder;
     @Getter
@@ -116,6 +117,6 @@ public enum JPAQueryOperation implements StoreQueryOperation<Function<Root<?>, F
 
     @Override
     public QueryType store() {
-        return null;
+        return QueryType.JPA;
     }
 }

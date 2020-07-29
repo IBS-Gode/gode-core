@@ -28,6 +28,7 @@ public enum ESQueryOperation implements StoreQueryOperation<QueryBuilder> {
     lte(1, (column, args) -> rangeQuery(column).lte(args[0].getValue()), QueryOperation.lte, Number.class),
     btw(2, (column, args) -> rangeQuery(column).gte(args[0].getValue()).lte(args[1].getValue()), QueryOperation.between, Number.class);
 
+    @Getter
     private int argCount;
     private final BiFunction<String, Operand[], QueryBuilder> builder;
     @Getter
@@ -43,9 +44,6 @@ public enum ESQueryOperation implements StoreQueryOperation<QueryBuilder> {
 
     @Override
     public QueryBuilder getOperation(String column, Operand... args) {
-        if (args == null || args.length < this.argCount) {
-            throw new GodeQueryException("Not enough arguments are available for the query");
-        }
         return this.builder.apply(column, args);
     }
 

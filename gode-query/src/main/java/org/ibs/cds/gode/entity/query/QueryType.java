@@ -7,6 +7,7 @@ public enum QueryType {
     JPA("JPA"),
     MYSQL("mysql"),
     CASSANDRA("cassandra"),
+    RAW_MONGODB("raw_mongodb"),
     MONGODB("mongodb"),
     ELASTICSEARCH("elasticsearch");
 

@@ -1,22 +1,15 @@
 package org.ibs.cds.gode.entity.query.parse;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.ibs.cds.gode.entity.query.QueryType;
-import org.ibs.cds.gode.entity.query.model.*;
-import org.ibs.cds.gode.entity.query.operation.QueryOperationTranslator;
+import org.ibs.cds.gode.entity.query.model.Order;
+import org.ibs.cds.gode.entity.query.model.QueryConfig;
+import org.ibs.cds.gode.entity.query.model.Select;
 import org.ibs.cds.gode.pagination.PageContext;
 import org.ibs.cds.gode.pagination.Sortable;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Selection;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class JPAQueryParser<E> implements QueryParser<E,JPAQuery<E>>{
 

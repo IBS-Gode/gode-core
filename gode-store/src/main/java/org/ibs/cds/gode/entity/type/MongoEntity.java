@@ -15,11 +15,8 @@ import java.util.Objects;
 @Document
 @QuerySupertype
 public abstract class MongoEntity<Id extends Serializable> extends StoreEntity<Id> {
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date createdOn;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date updatedOn;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long appId;
     private boolean active;
 

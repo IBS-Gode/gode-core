@@ -18,25 +18,26 @@ public class RawSQLQueryParser<E> implements QueryParser<E,String> {
     public Pair<String,PageContext> parse(QueryConfig<E> queryConfig, Map<String,Class> fieldMetadata) {
         Select query = queryConfig.getSelect();
         String tableName = queryConfig.getName();
-        Pair<String, String> orderByClause = parseOrderByClause(query.getOrder(), fieldMetadata);
+        Pair<String, Sortable.Type> orderByClause = parseOrderByClause(query.getOrder(), fieldMetadata);
         String whereClause = parseWhereClause(query.getWhere(), fieldMetadata);
         String fields = CollectionUtils.isNotEmpty(query.getOnly()) ? query.getOnly().stream().collect(Collectors.joining(",")) : "*" ;
         return parse0(queryConfig, tableName, fields, whereClause,  orderByClause);
     }
 
-    private Pair<String, PageContext> parse0(QueryConfig queryConfig, String tableName, String fields, String where, Pair<String, String> orderByClause){
+    private Pair<String, PageContext> parse0(QueryConfig queryConfig, String tableName, String fields, String where, Pair<String, Sortable.Type> orderByClause){
         PageContext context = PageContext.of(queryConfig.getPageNo(), queryConfig.getPageSize());
-        return Pair.of(String.format(TEMPLATE, fields, tableName, where, orderByClause.getLeft(), orderByClause.getRight(), context.getPageNumber() * context.getPageSize()), context);
+        context.setSortOrder(Set.of(Sortable.by(orderByClause.getRight(), orderByClause.getLeft())));
+        return Pair.of(String.format(TEMPLATE, fields, tableName, where, orderByClause.getLeft(), orderByClause.getRight().toString(), context.getPageNumber() * context.getPageSize()), context);
     }
 
-    private Pair<String, String> parseOrderByClause(Order order, Map<String, Class> fieldMetadata) {
+    private Pair<String, Sortable.Type> parseOrderByClause(Order order, Map<String, Class> fieldMetadata) {
         if (order == null) {
-            return Pair.of("createdOn", "DESC");
+            return Pair.of("createdOn", Sortable.Type.DESC);
         }
         String by = order.getBy() == null ?  "createdOn" : order.getBy();
         QueryParser.validate(fieldMetadata, by);
         Sortable.Type in = order.getIn();
-        return Pair.of(by, in == null ? "DESC": in.toString());
+        return Pair.of(by, in == null ? Sortable.Type.ASC: in);
     }
 
     private String parseWhereClause(Where where, Map<String, Class> fieldMetadata) {

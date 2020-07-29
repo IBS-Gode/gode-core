@@ -13,11 +13,8 @@ import java.util.Objects;
 
 @MappedSuperclass
 public abstract class JPAEntity<Id extends Serializable> extends StoreEntity<Id> {
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date createdOn;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date updatedOn;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long appId;
     private boolean active;
 
