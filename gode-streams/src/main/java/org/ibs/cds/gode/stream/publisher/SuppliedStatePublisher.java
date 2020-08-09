@@ -6,7 +6,6 @@ import org.ibs.cds.gode.queue.manager.QueueManager;
 import org.ibs.cds.gode.queue.manager.QueueRepository;
 import org.ibs.cds.gode.stream.config.StreamSourceType;
 import org.ibs.cds.gode.stream.repo.DataPipeline;
-import org.ibs.cds.gode.system.GodeAppEnvt;
 import org.ibs.cds.gode.util.EntityUtil;
 import org.ibs.cds.gode.util.QueueUtil;
 
@@ -52,5 +51,10 @@ public abstract class SuppliedStatePublisher<T> implements StatePublisher {
         return (s, e) -> {
             if (e != null) log.error("Error thrown while publishing: {}", e);
         };
+    }
+
+    @Override
+    public boolean isPublishing() {
+        return this.publishing.get();
     }
 }

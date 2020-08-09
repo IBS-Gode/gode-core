@@ -10,14 +10,14 @@ public class StreamLogic {
         processors = HashBasedTable.create();
     }
 
-    private static Table<String, String, DataProcessor<?,?,?>> processors;
+    private static Table<String, String, DataProcessor<?,?>> processors;
 
 
-    public static <T extends DataProcessor<?,?,?>> void addProcessor(String source, String process, T processor){
-        processors.put(source, process, processor);
+    public static <T extends DataProcessor<?,?>> void addProcessor(String from, String to, T processor){
+        processors.put(from, to, processor);
     }
 
-    public static <T extends DataProcessor<?,?,?>> T getProcessor(String source, String process){
-        return (T) processors.get(source, process);
+    public static <T extends DataProcessor<?,?>> T getProcessor(String from, String to){
+        return (T) processors.get(from, to);
     }
 }

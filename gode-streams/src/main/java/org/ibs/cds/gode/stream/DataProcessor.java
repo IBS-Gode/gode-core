@@ -11,19 +11,19 @@ import org.ibs.cds.gode.stream.repo.StreamLogic;
  * @author manugraj
  */
 @Slf4j
-public abstract class DataProcessor<P extends DataProcessor<?,T,O>,T, O> extends AbstractProcessor<String, String> {
+public abstract class DataProcessor<T, O> extends AbstractProcessor<String, String> {
 
-    private final String source;
-    private final String process;
+    private final String from;
+    private final String to;
     public abstract T process(T data);
     public abstract O transform(T data);
     private final QueueDataParser parser;
 
-    public DataProcessor(String source, String process){
-        this.source = source;
-        this.process = process;
+    public DataProcessor(String from, String to){
+        this.from = from;
+        this.to = to;
         this.parser = new QueueDataParser();
-        StreamLogic.addProcessor(source, process, this);
+        StreamLogic.addProcessor(from, to, this);
     }
 
 
