@@ -1,6 +1,9 @@
 package org.ibs.cds.gode.queue.manager;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -24,6 +27,11 @@ public class QueueManager<T> {
 
     public boolean push(T... data){
         return Arrays.stream(data).map(d ->pusher.send(context, d)).allMatch(k->k);
+    }
+
+    public boolean push(List<T> data){
+        if(CollectionUtils.isEmpty(data)) return false;
+        return data.stream().map(d ->pusher.send(context, d)).allMatch(k->k);
     }
 
     public boolean push(T data){

@@ -86,5 +86,9 @@
             <artifactId>gode-query</artifactId>
             <version>${gode.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr</artifactId>
+        </dependency>
     </dependencies>
 </project>

@@ -10,6 +10,7 @@ import org.ibs.cds.gode.entity.type.TypicalEntity;
 import org.ibs.cds.gode.entity.view.EntityView;
 import org.ibs.cds.gode.queue.manager.QueueManager;
 import org.ibs.cds.gode.queue.manager.QueueRepository;
+import org.ibs.cds.gode.util.QueueUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -26,7 +27,7 @@ public abstract class AsyncEntityManager<View extends EntityView<Id>, Entity ext
     AsyncEntityManager(String context, StoreRepo storeEntityRepo, CacheRepo cacheableEntityRepo,
                        QueueRepository queueRepository) {
         super(storeEntityRepo, cacheableEntityRepo);
-        queueManager = new QueueManager(queueRepository.getQueuePrefix().concat(context).toLowerCase(), queueRepository.getQueueRepo(),queueRepository.getPusherProperties(), queueRepository.getSubscriberProperties());
+        queueManager = new QueueManager(QueueUtil.topic(queueRepository.getQueuePrefix(), context), queueRepository.getQueueRepo(),queueRepository.getPusherProperties(), queueRepository.getSubscriberProperties());
         queueManager.subscribe(storeSave());
     }
 

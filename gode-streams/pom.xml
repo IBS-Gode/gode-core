@@ -16,5 +16,15 @@
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-streams</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.ibs.cds.gode</groupId>
+            <artifactId>gode-queue</artifactId>
+            <version>${gode.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ibs.cds.gode</groupId>
+            <artifactId>gode-common</artifactId>
+            <version>${gode.version}</version>
+        </dependency>
     </dependencies>
 </project>

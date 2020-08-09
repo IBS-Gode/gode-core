@@ -206,9 +206,20 @@ public enum KnownException {
         public AppValidationFailedException provide(Throwable e, Serializable details) {
             return new AppValidationFailedException(new Error(getCode(), getMessage(), details),getMessage());
         }
-    }
-    
-    
+    },
+    INVALID_CONFIG_EXCPETION(16, "Invalid configuration exception"){
+        private String message = getMessage();
+        @Override
+        public InvalidConfigurationException provide(Serializable details) {
+            return new InvalidConfigurationException(new Error(getCode(), getMessage(), details), message);
+        }
+
+        @Override
+        public InvalidConfigurationException provide(Throwable e, Serializable details) {
+            return new InvalidConfigurationException(new Error(getCode(), getMessage(), details),getMessage());
+        }
+    },
+
     ;
 
     private final int code;

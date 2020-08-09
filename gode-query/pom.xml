@@ -10,7 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>gode-query</artifactId>
-
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -34,7 +33,6 @@
         <dependency>
             <groupId>org.elasticsearch.plugin</groupId>
             <artifactId>mapper-extras</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
