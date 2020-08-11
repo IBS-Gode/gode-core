@@ -20,7 +20,7 @@ public abstract class ManyToAnyRManager<RelationView extends RelationshipView<A,
 
 
     public <StoreRepo extends ManyToAnyRelationshipRepo<Relation, aid, bid>> ManyToAnyRManager(StoreRepo storeEntityRepo, EntityManager<A, ?, aid> asideEntityManager, EntityManager<B, ?, bid> bsideEntityManager) {
-        super(storeEntityRepo, asideEntityManager, bsideEntityManager);
+        super(storeEntityRepo, asideEntityManager, bsideEntityManager, true);
     }
 
     public PagedData<RelationView> findRelationshipFrom(A a, PageContext context){

@@ -21,7 +21,7 @@ public abstract class OneToManyRManager<RelationView extends RelationshipView<A,
 
 
     public <StoreRepo extends OneToManyRelationshipRepo<Relation, aid, bid>> OneToManyRManager(StoreRepo storeEntityRepo, EntityManager<A, ?, aid> asideEntityManager, EntityManager<B, ?, bid> bsideEntityManager) {
-        super(storeEntityRepo, asideEntityManager, bsideEntityManager);
+        super(storeEntityRepo, asideEntityManager, bsideEntityManager, true);
     }
 
     public PagedData<RelationView> findRelationshipFrom(A a, PageContext context){

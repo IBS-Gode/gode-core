@@ -19,7 +19,7 @@ public abstract class OneToOneRManager<RelationView extends RelationshipView<A, 
 
 
     public <StoreRepo extends OneToOneRelationshipRepo<Relation, aid, bid>> OneToOneRManager(StoreRepo storeEntityRepo, EntityManager<A, ?, aid> asideEntityManager, EntityManager<B, ?, bid> bsideEntityManager) {
-        super(storeEntityRepo, asideEntityManager, bsideEntityManager);
+        super(storeEntityRepo, asideEntityManager, bsideEntityManager, true);
     }
 
     public RelationView findRelationshipFrom(A a){

@@ -80,7 +80,7 @@ public abstract class EntityManager<View extends EntityView<Id>, Entity extends 
                     Long currentValue = field.getFieldGetter().get();
                     return currentValue == null || currentValue.compareTo(0L) == 0;
                 })
-                .forEach(field->field.getFieldSetter().accept(CounterSpectator.getNext(field.getName().concat(entity.getClassifier()))));
+                .forEach(field->field.getFieldSetter().accept(CounterSpectator.getNext(field.getName().concat(entity.getSimpleClassifier()))));
     }
 
     public Optional<Entity> beforeSave(Optional<Entity> entity) {

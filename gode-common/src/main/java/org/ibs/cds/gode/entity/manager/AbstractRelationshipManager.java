@@ -28,11 +28,13 @@ public abstract class AbstractRelationshipManager<RelationView extends Relations
 
     private EntityManager<A, ?, aid> asideEntityManager;
     private EntityManager<B, ?, bid> bsideEntityManager;
+    private final boolean forceCreate;
 
-    public <StoreRepo extends RelationshipRepo<Relation, aid,bid>> AbstractRelationshipManager(StoreRepo storeEntityRepo, EntityManager<A, ?, aid> asideEntityManager, EntityManager<B, ?, bid> bsideEntityManager) {
+    public <StoreRepo extends RelationshipRepo<Relation, aid,bid>> AbstractRelationshipManager(StoreRepo storeEntityRepo, EntityManager<A, ?, aid> asideEntityManager, EntityManager<B, ?, bid> bsideEntityManager, boolean forceCreate) {
         super(storeEntityRepo, null);
         this.asideEntityManager = asideEntityManager;
         this.bsideEntityManager = bsideEntityManager;
+        this.forceCreate = forceCreate;
     }
 
     @Override
@@ -71,9 +73,18 @@ public abstract class AbstractRelationshipManager<RelationView extends Relations
         A a = asideEntityManager.find(asideAndBside.getLeft());
         B b = bsideEntityManager.find(asideAndBside.getRight());
         if(a == null || b == null){
-            return noRelativeDetails("Relative details are not saved");
+            if(forceCreate){
+                forceCreate(view, a, b);
+            }else{
+                return noRelativeDetails("Relative details are not saved");
+            }
         }
         return relationshipIntegrityValidation(asideAndBside);
+    }
+
+    private void forceCreate(RelationView view, A a, B b) {
+        if(a == null) asideEntityManager.save(view.getAside());
+        if(b == null) bsideEntityManager.save(view.getBside());
     }
 
     @Override
