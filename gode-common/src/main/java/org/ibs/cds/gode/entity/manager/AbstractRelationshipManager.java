@@ -1,5 +1,6 @@
 package org.ibs.cds.gode.entity.manager;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.ibs.cds.gode.entity.relationship.RelationshipType;
 import org.ibs.cds.gode.entity.repo.OneToManyRelationshipRepo;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.Optional;
-
+@Slf4j
 public abstract class AbstractRelationshipManager<RelationView extends RelationshipView<A, B>,
         Relation extends Relationship<aid, bid>,
         A extends EntityView<aid>,
@@ -67,6 +68,7 @@ public abstract class AbstractRelationshipManager<RelationView extends Relations
     public ValidationStatus relationshipValidation(RelationView view) {
 
         if(view.getBside() == null || view.getAside() == null || view.getBside().getId() == null || view.getAside().getId() == null){
+            log.error("Relative details are not available for relationship:{}", view);
             return noRelativeDetails("Relative details are not available");
         }
         Pair<aid, bid> asideAndBside = findAsideAndBside(view);
@@ -83,6 +85,7 @@ public abstract class AbstractRelationshipManager<RelationView extends Relations
     }
 
     private void forceCreate(RelationView view, A a, B b) {
+        log.warn("Force creating relatives in relationship:{}", view);
         if(a == null) asideEntityManager.save(view.getAside());
         if(b == null) bsideEntityManager.save(view.getBside());
     }
