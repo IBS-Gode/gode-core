@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class QueueStateSynchroniser<V extends EntityView<?>> implements StateSynchroniser {
 
     private final EntityManager<V, ?, ?> manager;
-    private final QueueManager<V> queueManager;
+    private final QueueManager<?,V> queueManager;
     private AtomicBoolean syncing = new AtomicBoolean(false);
 
     public QueueStateSynchroniser(String type, EntityManager<V,?,?> manager, QueueRepository queueRepository, DataPipeline dataPipeline){

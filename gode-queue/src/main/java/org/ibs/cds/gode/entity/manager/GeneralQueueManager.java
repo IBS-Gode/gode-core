@@ -9,12 +9,18 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+
 @Service
 @Conditional(KafkaEnabler.class)
-public class GeneralQueueManager extends QueueManager<GeneralData> {
+public class GeneralQueueManager extends QueueManager<String,GeneralData> {
 
     @Autowired
     public GeneralQueueManager(Environment env, QueueRepo queueRepo, QueueRepoProperties.PusherProperties pusherProperties, QueueRepoProperties.SubscriberProperties subscriberProperties) {
         super(env.getProperty("gode.queue.general","general"), queueRepo, pusherProperties, subscriberProperties);
+    }
+
+    public boolean push(GeneralData... generalData){
+        return Arrays.stream(generalData).map(k-> this.push(k.getKey(), k)).allMatch(k->k);
     }
 }

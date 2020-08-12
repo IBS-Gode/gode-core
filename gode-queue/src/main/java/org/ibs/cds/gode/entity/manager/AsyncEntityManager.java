@@ -22,7 +22,7 @@ public abstract class AsyncEntityManager<View extends EntityView<Id>, Entity ext
         Id extends Serializable> extends EntityManager<View, Entity,Id>
         implements StateEntityManagerOperation<View, Entity, Id> {
 
-    private QueueManager<Entity> queueManager;
+    private QueueManager<Id,View> queueManager;
     public <StoreRepo extends StoreEntityRepo<Entity, Id>, CacheRepo extends CacheableEntityRepo<Entity, Id>>
     AsyncEntityManager(String context, StoreRepo storeEntityRepo, CacheRepo cacheableEntityRepo,
                        QueueRepository queueRepository) {
@@ -40,13 +40,13 @@ public abstract class AsyncEntityManager<View extends EntityView<Id>, Entity ext
     }
 
     @NotNull
-    protected Consumer<Optional<Entity>> storeSave() {
-        return opts->opts.ifPresent(entity->{
-            log.debug("Async store persistence started for entity: {}",entity);
+    protected Consumer<Optional<View>> storeSave() {
+        return opts->opts.ifPresent(view->{
+            log.debug("Async store persistence started for view: {}",view);
             var storeRepo = this.repository.get(RepoType.STORE);
             if(storeRepo != null){
-                storeRepo.save(entity);
-                log.debug("Async store persistence complete for entity: {}",entity);
+                storeRepo.save(transform(view));
+                log.debug("Async store persistence complete for view: {}",view);
             }
         });
     }
@@ -57,7 +57,7 @@ public abstract class AsyncEntityManager<View extends EntityView<Id>, Entity ext
         entityOptional.ifPresent(k->{
             var cache =repository.get(RepoType.CACHE);
             if(cache != null) cache.save(k);
-            queueManager.push(k);
+            queueManager.push(k.getId(), this.transform(k));
             log.debug("Store persistence deferred for entity: {}",k);
         });
         return entityOptional;

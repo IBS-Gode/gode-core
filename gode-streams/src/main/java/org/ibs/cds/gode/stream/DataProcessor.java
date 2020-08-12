@@ -45,10 +45,7 @@ public abstract class DataProcessor<T, O> extends AbstractProcessor<String, Stri
         Try.code( (Object j) -> parser.parse(j))
                 .catchWith(e->log.error("Error while serialization of queue data in upstream",e))
                 .run(k)
-                .ifPresent(data -> {
-                    this.context().forward(key, data);
-                    this.context().commit();
-                });
+                .ifPresent(data -> this.context().forward(key, data));
     }
 
 
