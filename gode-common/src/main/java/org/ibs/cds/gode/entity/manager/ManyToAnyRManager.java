@@ -39,6 +39,6 @@ public abstract class ManyToAnyRManager<RelationView extends RelationshipView<A,
 
     @Override
     public RelationshipType type() {
-        return RelationshipType.ONE_TO_MANY;
+        return RelationshipType.MANY_TO_ANY;
     }
 }
