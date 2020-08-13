@@ -1,7 +1,6 @@
 package org.ibs.cds.gode.stream.repo;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
@@ -11,6 +10,7 @@ import org.ibs.cds.gode.exception.KnownException;
 import org.ibs.cds.gode.queue.manager.kafka.KafkaEnabler;
 import org.ibs.cds.gode.queue.manager.kafka.KafkaProperties;
 import org.ibs.cds.gode.queue.manager.kafka.KafkaSecurity;
+import org.ibs.cds.gode.stream.GodeStreamLogic;
 import org.ibs.cds.gode.stream.config.DataPipelineConf;
 import org.ibs.cds.gode.stream.config.Node;
 import org.ibs.cds.gode.stream.publisher.StatePublisher;
@@ -33,6 +33,7 @@ import java.util.Properties;
 public class KafkaDataPipeline implements DataPipeline {
 
     private final DataPipelineConf configuration;
+    private final GodeStreamLogic logic;
     private Environment environment;
     private String prefix;
     private List<StateSynchroniser> synchronisers;
@@ -40,13 +41,14 @@ public class KafkaDataPipeline implements DataPipeline {
     private KafkaProperties kafkaProperties;
 
     @Autowired
-    public KafkaDataPipeline(Environment environment, KafkaProperties kafkaProperties) {
+    public KafkaDataPipeline(Environment environment, KafkaProperties kafkaProperties, GodeStreamLogic logic) {
         this.environment = environment;
         this.prefix = environment.getProperty("gode.queue.context.prefix", "gode-");
         this.synchronisers = new ArrayList();
         this.publishers = new ArrayList();
         this.kafkaProperties = kafkaProperties;
         this.configuration = this.configuration();
+        this.logic = logic;
     }
 
     @Bean
@@ -58,7 +60,6 @@ public class KafkaDataPipeline implements DataPipeline {
         properties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getServers());
         properties.put(StreamsConfig.REPLICATION_FACTOR_CONFIG, kafkaProperties.getStreamReplication());
         properties.put(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, WallclockTimestampExtractor.class);
-        properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, kafkaProperties.getOffsetReset());
         properties.put("max.poll.interval.ms", 600000);
         boolean authenticated = kafkaProperties.getSecurity() != null;
         authentication(properties, authenticated);
@@ -103,7 +104,7 @@ public class KafkaDataPipeline implements DataPipeline {
 
     private void addNodes(String pipelineName, String sourceName, Topology topology, Node node) {
         String nodeResolvedName = nodeName(pipelineName, node.getMapTo());
-        topology.addProcessor(nodeResolvedName, ()->StreamLogic.getProcessor(sourceName, nodeResolvedName), sourceName);
+        topology.addProcessor(nodeResolvedName,()-> logic.getProcessor(sourceName, nodeResolvedName).get(), sourceName);
         if (node.getNext() != null) {
             addNodes(pipelineName, nodeResolvedName, topology, node.getNext());
             return;

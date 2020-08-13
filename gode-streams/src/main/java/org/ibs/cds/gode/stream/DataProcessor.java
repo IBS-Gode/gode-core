@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.streams.processor.AbstractProcessor;
 import org.ibs.cds.gode.entity.generic.Try;
 import org.ibs.cds.gode.queue.manager.QueueDataParser;
-import org.ibs.cds.gode.stream.repo.StreamLogic;
 
 /**
  *
@@ -13,20 +12,13 @@ import org.ibs.cds.gode.stream.repo.StreamLogic;
 @Slf4j
 public abstract class DataProcessor<T, O> extends AbstractProcessor<String, String> {
 
-    private final String from;
-    private final String to;
     public abstract T process(T data);
     public abstract O transform(T data);
     private final QueueDataParser parser;
 
-    public DataProcessor(String from, String to){
-        this.from = from;
-        this.to = to;
+    public DataProcessor(){
         this.parser = new QueueDataParser();
-        StreamLogic.addProcessor(from, to, this);
     }
-
-
 
     @Override
     public void process(String key, String value) {
@@ -45,7 +37,10 @@ public abstract class DataProcessor<T, O> extends AbstractProcessor<String, Stri
         Try.code( (Object j) -> parser.parse(j))
                 .catchWith(e->log.error("Error while serialization of queue data in upstream",e))
                 .run(k)
-                .ifPresent(data -> this.context().forward(key, data));
+                .ifPresent(data -> {
+                    context().forward(key, data);
+                    context().commit();
+                });
     }
 
 
