@@ -29,4 +29,8 @@ public class YamlReadWriteUtil {
     public static <T> T readFile(File file, Class<T> className) throws IOException {
         return ymlMapper.readValue(file, className);
     }
+
+    public static <T> String toString(T object) throws IOException {
+        return ymlMapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+    }
 }

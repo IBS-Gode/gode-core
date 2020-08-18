@@ -9,7 +9,7 @@ import org.ibs.cds.gode.entity.query.exception.GodeQueryResultProcessException;
 import java.io.IOException;
 import java.sql.*;
 
-public class GodeQueryResultSerializer extends JsonSerializer<ResultSet> {
+public class PrestoQueryResultSerializer extends JsonSerializer<ResultSet> {
 
     @Override
     public Class<ResultSet> handledType() {
@@ -17,7 +17,7 @@ public class GodeQueryResultSerializer extends JsonSerializer<ResultSet> {
     }
 
     @Override
-    public void serialize(ResultSet rs, JsonGenerator jgen, SerializerProvider provider) throws GodeQueryResultProcessException {
+    public void serialize(ResultSet rs, JsonGenerator jsonGenerator, SerializerProvider provider) throws GodeQueryResultProcessException {
 
         try {
             ResultSetMetaData rsmd = rs.getMetaData();
@@ -30,7 +30,7 @@ public class GodeQueryResultSerializer extends JsonSerializer<ResultSet> {
                 columnTypes[i] = rsmd.getColumnType(i + 1);
             }
 
-            jgen.writeStartArray();
+            jsonGenerator.writeStartArray();
 
             while (rs.next()) {
 
@@ -38,34 +38,34 @@ public class GodeQueryResultSerializer extends JsonSerializer<ResultSet> {
                 long l;
                 double d;
 
-                jgen.writeStartObject();
+                jsonGenerator.writeStartObject();
 
                 for (int i = 0; i < columnNames.length; i++) {
 
-                    jgen.writeFieldName(columnNames[i]);
+                    jsonGenerator.writeFieldName(columnNames[i]);
                     switch (columnTypes[i]) {
 
                     case Types.INTEGER:
                         l = rs.getInt(i + 1);
                         if (rs.wasNull()) {
-                            jgen.writeNull();
+                            jsonGenerator.writeNull();
                         } else {
-                            jgen.writeNumber(l);
+                            jsonGenerator.writeNumber(l);
                         }
                         break;
 
                     case Types.BIGINT:
                         l = rs.getLong(i + 1);
                         if (rs.wasNull()) {
-                            jgen.writeNull();
+                            jsonGenerator.writeNull();
                         } else {
-                            jgen.writeNumber(l);
+                            jsonGenerator.writeNumber(l);
                         }
                         break;
 
                     case Types.DECIMAL:
                     case Types.NUMERIC:
-                        jgen.writeNumber(rs.getBigDecimal(i + 1));
+                        jsonGenerator.writeNumber(rs.getBigDecimal(i + 1));
                         break;
 
                     case Types.FLOAT:
@@ -73,9 +73,9 @@ public class GodeQueryResultSerializer extends JsonSerializer<ResultSet> {
                     case Types.DOUBLE:
                         d = rs.getDouble(i + 1);
                         if (rs.wasNull()) {
-                            jgen.writeNull();
+                            jsonGenerator.writeNull();
                         } else {
-                            jgen.writeNumber(d);
+                            jsonGenerator.writeNumber(d);
                         }
                         break;
 
@@ -83,52 +83,52 @@ public class GodeQueryResultSerializer extends JsonSerializer<ResultSet> {
                     case Types.VARCHAR:
                     case Types.LONGNVARCHAR:
                     case Types.LONGVARCHAR:
-                        jgen.writeString(rs.getString(i + 1));
+                        jsonGenerator.writeString(rs.getString(i + 1));
                         break;
 
                     case Types.BOOLEAN:
                     case Types.BIT:
                         b = rs.getBoolean(i + 1);
                         if (rs.wasNull()) {
-                            jgen.writeNull();
+                            jsonGenerator.writeNull();
                         } else {
-                            jgen.writeBoolean(b);
+                            jsonGenerator.writeBoolean(b);
                         }
                         break;
 
                     case Types.BINARY:
                     case Types.VARBINARY:
                     case Types.LONGVARBINARY:
-                        jgen.writeBinary(rs.getBytes(i + 1));
+                        jsonGenerator.writeBinary(rs.getBytes(i + 1));
                         break;
 
                     case Types.TINYINT:
                     case Types.SMALLINT:
                         l = rs.getShort(i + 1);
                         if (rs.wasNull()) {
-                            jgen.writeNull();
+                            jsonGenerator.writeNull();
                         } else {
-                            jgen.writeNumber(l);
+                            jsonGenerator.writeNumber(l);
                         }
                         break;
 
                     case Types.DATE:
-                        provider.defaultSerializeDateValue(rs.getDate(i + 1), jgen);
+                        provider.defaultSerializeDateValue(rs.getDate(i + 1), jsonGenerator);
                         break;
 
                     case Types.TIMESTAMP:
-                        provider.defaultSerializeDateValue(rs.getTime(i + 1), jgen);
+                        provider.defaultSerializeDateValue(rs.getTimestamp(i + 1), jsonGenerator);
                         break;
 
                     case Types.BLOB:
                         Blob blob = rs.getBlob(i);
-                        provider.defaultSerializeValue(blob.getBinaryStream(), jgen);
+                        provider.defaultSerializeValue(blob.getBinaryStream(), jsonGenerator);
                         blob.free();
                         break;
 
                     case Types.CLOB:
                         Clob clob = rs.getClob(i);
-                        provider.defaultSerializeValue(clob.getCharacterStream(), jgen);
+                        provider.defaultSerializeValue(clob.getCharacterStream(), jsonGenerator);
                         clob.free();
                         break;
 
@@ -146,15 +146,15 @@ public class GodeQueryResultSerializer extends JsonSerializer<ResultSet> {
 
                     case Types.JAVA_OBJECT:
                     default:
-                        provider.defaultSerializeValue(rs.getObject(i + 1), jgen);
+                        provider.defaultSerializeValue(rs.getObject(i + 1), jsonGenerator);
                         break;
                     }
                 }
 
-                jgen.writeEndObject();
+                jsonGenerator.writeEndObject();
             }
 
-            jgen.writeEndArray();
+            jsonGenerator.writeEndArray();
 
         } catch (SQLException | IOException e) {
             throw new GodeQueryResultProcessException(e);

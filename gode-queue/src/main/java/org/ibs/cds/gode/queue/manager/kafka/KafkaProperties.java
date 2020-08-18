@@ -35,6 +35,10 @@ public class KafkaProperties implements QueueRepoProperties.SubscriberProperties
     private String offsetReset;
     private String sesssionTimeout;
     private int pollInterval;
+    private String clientId;
+    private String appName;
+    private String streamReplication;
+    private int activeProcessors;
 
     public Properties pusherProperties(){
         Properties properties = generalProperties();

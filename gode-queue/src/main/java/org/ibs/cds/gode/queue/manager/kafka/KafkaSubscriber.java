@@ -72,8 +72,7 @@ public class KafkaSubscriber<T> implements QueueSubscriber<T, KafkaProperties> {
             }
             consumer.commitSync();
         } catch (Throwable e) {
-            log.error("Consumption of record failed");
-            throw KnownException.QUEUE_CONSUMPTION_FAILED_EXCEPTION.provide(e);
+            log.error("Consumption of record failed due to {}",e);
         }
     }
 }

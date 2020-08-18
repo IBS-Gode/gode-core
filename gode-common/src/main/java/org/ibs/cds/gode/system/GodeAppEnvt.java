@@ -4,6 +4,7 @@ import org.ibs.cds.gode.exception.KnownException;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class GodeAppEnvt extends GodeConstant{
@@ -29,6 +30,13 @@ public class GodeAppEnvt extends GodeConstant{
         }
     }
 
+    public static <T> Optional<T> getOptionalObject(Class<T> className) {
+        try {
+            return Optional.ofNullable((T) godeAppEnvt.applicationContext.get().getBean(className));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
 
     @SuppressWarnings("unchecked")
     public <T> T getObject(String beanName) {
@@ -37,7 +45,14 @@ public class GodeAppEnvt extends GodeConstant{
         } catch (Exception e) {
             throw KnownException.OBJECT_NOT_FOUND.provide(e);
         }
+    }
 
+    public <T> Optional<T> getOptionalObject(String beanName) {
+        try {
+            return Optional.ofNullable((T) godeAppEnvt.applicationContext.get().getBean(beanName));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     public <T> T getProperty(String prop, Class<T> type){

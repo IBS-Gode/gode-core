@@ -1,7 +1,6 @@
 package org.ibs.cds.gode.query;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.vincentrussell.query.mongodb.sql.converter.MongoDBQueryHolder;
 import org.apache.commons.lang3.tuple.Pair;
 import org.ibs.cds.gode.entity.query.QueryType;
 import org.ibs.cds.gode.entity.query.dsl.Query;
@@ -12,13 +11,18 @@ import org.ibs.cds.gode.entity.query.model.QueryOperation;
 import org.ibs.cds.gode.entity.query.parse.RawMongoQueryParser;
 import org.ibs.cds.gode.entity.query.parse.RawSQLQueryParser;
 import org.ibs.cds.gode.pagination.PageContext;
+import org.springframework.data.mongodb.core.query.BasicQuery;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class Test {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException, JsonProcessingException {
+        presto();
+    }
+
+    private static void query() {
         QueryConfig query = Query
                             .select("name", "mark")
                             .where("name", QueryOperation.eq, Operand.literal("1"))
@@ -32,10 +36,10 @@ public class Test {
         RawMongoQueryParser<Entity> mParser = new RawMongoQueryParser();
 
         Pair<String, PageContext> parsed = parser.doParse(query);
-        Pair<MongoDBQueryHolder, Entity> mongoParsed = mParser.doParse(query);
+        Pair<BasicQuery, Entity> mongoParsed = mParser.doParse(query);
         System.out.println(query);
         System.out.println(parsed.getKey());
-        System.out.println(mongoParsed.getKey().getQuery().toJson());
+        System.out.println(mongoParsed.getKey());
     }
 
     public static void test(String... fields) {
@@ -43,12 +47,13 @@ public class Test {
     }
 
     private static void presto() throws SQLException, JsonProcessingException {
-        String query = "select * from customer";
+        String query = "select * from entity1";
         PrestoQueryManager qm = new PrestoQueryManager(
                 Pair.of("localhost", "8080"),
                 Pair.of("user", "dev-user")
 //                Pair.of("password", "dev-user")
         );
-        System.out.println(qm.execute(QueryType.MYSQL, query, String.class));
+      List<Entity1> result = List.of(qm.execute(QueryType.MYSQL, query, Entity1[].class));
+        result.forEach(System.out::println);
     }
 }

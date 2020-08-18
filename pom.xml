@@ -228,6 +228,11 @@
 				<artifactId>sql-to-mongo-db-query-converter</artifactId>
 				<version>1.14</version>
 			</dependency>
+			<dependency>
+				<groupId>io.vavr</groupId>
+				<artifactId>vavr</artifactId>
+				<version>0.10.3</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<distributionManagement>
